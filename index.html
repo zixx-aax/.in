@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>MK HTML Cloud (Permanent & Secure)</title>
+
+<style>
+body{margin:0;font-family:Arial;background:#0f172a;color:#fff;}
+.container{padding:15px;}
+textarea{
+  width:100%;height:250px;
+  background:#020617;color:#0f0;padding:10px;
+  border:1px solid #334155;
+  border-radius:4px;
+}
+button{
+  padding:10px 15px;margin:5px 5px 5px 0;
+  background:#2563eb;color:white;border:none;
+  cursor:pointer;
+  border-radius:4px;
+  font-weight:bold;
+}
+button:hover{background:#1d4ed8;}
+iframe{
+  width:100%;height:300px;margin-top:10px;background:white;
+  border:1px solid #334155;
+}
+.card{
+  background:#020617;
+  padding:10px;margin-top:10px;
+  border:1px solid #334155;
+  cursor:pointer;
+  border-radius:4px;
+}
+.card:hover{background:#1e293b;}
+input{
+  width:100%;
+  padding:10px;
+  margin-top:5px;
+  background:#020617;
+  color:#38bdf8;
+  border:1px solid #334155;
+  border-radius:4px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="app">
+
+<h2>⚡ Fast HTML Cloud Studio</h2>
+
+<textarea id="code" placeholder="Write your HTML code here..."></textarea>
+
+<br>
+
+<button onclick="preview()">Preview</button>
+<button onclick="saveLocal()">Save Local</button>
+<button onclick="generate()">Generate Link</button>
+
+<iframe id="previewFrame"></iframe>
+
+<div id="linkBox"></div>
+
+<h3>📁 History</h3>
+<div id="historyList"></div>
+
+</div>
+
+<script>
+
+// 🔴 PUT YOUR API KEY ONLY
+const API_KEY = "$2a$10$8yhV85AJmo2nIR.wx9d2F.I6dTxt5NnpIKdZs9qqKWzB6ZAI9NUhG";
+
+// PREVIEW
+function preview(){
+  document.getElementById("previewFrame").srcdoc =
+    document.getElementById("code").value;
+}
+
+// SAVE LOCAL
+function saveLocal(){
+  let name = prompt("File name:");
+  if(!name) return;
+
+  let files = JSON.parse(localStorage.getItem("mk_files") || "{}");
+  files[name] = document.getElementById("code").value;
+
+  localStorage.setItem("mk_files", JSON.stringify(files));
+  loadHistory();
+}
+
+// LOAD HISTORY
+function loadHistory(){
+  let files = JSON.parse(localStorage.getItem("mk_files") || "{}");
+  let box = document.getElementById("historyList");
+
+  box.innerHTML = "";
+
+  for(let name in files){
+    let div = document.createElement("div");
+    div.className = "card";
+    div.innerText = "📄 " + name;
+
+    div.onclick = function(){
+      document.getElementById("code").value = files[name];
+      preview();
+    }
+
+    box.appendChild(div);
+  }
+}
+
+// 🔥 GENERATE (WITH PERMANENT LINK & PASSWORD OPTION)
+async function generate(){
+
+  let html = document.getElementById("code").value;
+  if(!html){ alert("Empty code!"); return; }
+
+  let inputTime = prompt("Enter expire time in minutes, or type 'permanent':");
+  if(!inputTime) return;
+
+  let expireTime;
+
+  // Check if permanent link requested
+  if(inputTime.trim().toLowerCase() === "permanent" || inputTime.trim().toLowerCase() === "p"){
+    let pass = prompt("Enter password for permanent link:");
+    if(pass !== "L"){
+      alert("❌ Incorrect password! Link creation cancelled.");
+      return;
+    }
+    expireTime = null; // null means it never expires
+  } else {
+    let minutes = parseFloat(inputTime);
+    if(isNaN(minutes) || minutes <= 0){
+      alert("Please enter a valid number of minutes or 'permanent'.");
+      return;
+    }
+    expireTime = Date.now() + (minutes * 60000);
+  }
+
+  let data = {
+    html: html,
+    expire: expireTime
+  };
+
+  try{
+    let res = await fetch("https://api.jsonbin.io/v3/b", {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "X-Master-Key":API_KEY
+      },
+      body: JSON.stringify(data)
+    });
+
+    let json = await res.json();
+    let binId = json.metadata.id;
+
+    // Clean generated link format
+    let link = location.origin + location.pathname + "?id=" + binId;
+
+    document.getElementById("linkBox").innerHTML = `
+      <p style="margin-top:10px; color:#38bdf8; font-size:14px;">🔗 Generated Link (${expireTime === null ? 'Permanent' : 'Temporary'}):</p>
+      <input value="${link}" readonly onclick="this.select()">
+    `;
+
+  }catch(e){
+    alert("Error: " + e.message);
+  }
+}
+
+// 🔥 VIEW MODE
+async function loadViewer(){
+
+  let params = new URLSearchParams(location.search);
+  let id = params.get("id");
+
+  if(!id) return;
+
+  try{
+
+    let res = await fetch(`https://api.jsonbin.io/v3/b/${id}/latest`, {
+      headers:{
+        "X-Master-Key":API_KEY
+      }
+    });
+
+    let json = await res.json();
+
+    if(!json.record){
+      document.body.innerHTML="<h2 style='text-align:center;margin-top:20vh;'>❌ Not Found</h2>";
+      return;
+    }
+
+    let data = json.record;
+
+    // Check expiration only if an expire timestamp exists
+    if(data.expire !== null && Date.now() > data.expire){
+      document.body.innerHTML="<h2 style='text-align:center;margin-top:20vh;'>⛔ This link has expired.</h2>";
+      return;
+    }
+
+    // RENDER HTML
+    document.body.innerHTML = "";
+
+    let iframe = document.createElement("iframe");
+    iframe.style.width = "100%";
+    iframe.style.height = "100vh";
+    iframe.style.border = "none";
+
+    iframe.srcdoc = data.html;
+
+    document.body.appendChild(iframe);
+
+  }catch(e){
+    document.body.innerHTML="<h2 style='text-align:center;margin-top:20vh;'>⚠️ Error Loading Page</h2>";
+  }
+}
+
+// INIT
+loadHistory();
+loadViewer();
+
+</script>
+
+</body>
+</html>
