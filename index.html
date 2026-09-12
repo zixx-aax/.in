@@ -73,10 +73,24 @@ input{
 // 🔴 PUT YOUR API KEY ONLY
 const API_KEY = "$2a$10$8yhV85AJmo2nIR.wx9d2F.I6dTxt5NnpIKdZs9qqKWzB6ZAI9NUhG";
 
+// HELPER: Ensure responsive viewport meta tag is present
+function injectViewport(html) {
+  if (!/<meta\s+name=["']viewport["']/i.test(html)) {
+    if (/<head>/i.test(html)) {
+      return html.replace(/<head>/i, '<head>\n<meta name="viewport" content="width=device-width, initial-scale=1.0">');
+    } else if (/<html>/i.test(html)) {
+      return html.replace(/<html>/i, '<html>\n<head>\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n</head>');
+    } else {
+      return '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' + html;
+    }
+  }
+  return html;
+}
+
 // PREVIEW
 function preview(){
-  document.getElementById("previewFrame").srcdoc =
-    document.getElementById("code").value;
+  let code = document.getElementById("code").value;
+  document.getElementById("previewFrame").srcdoc = injectViewport(code);
 }
 
 // SAVE LOCAL
@@ -202,7 +216,7 @@ async function loadViewer(){
       return;
     }
 
-    // RENDER HTML
+    // RENDER HTML with mobile/desktop support
     document.body.innerHTML = "";
 
     let iframe = document.createElement("iframe");
@@ -210,7 +224,7 @@ async function loadViewer(){
     iframe.style.height = "100vh";
     iframe.style.border = "none";
 
-    iframe.srcdoc = data.html;
+    iframe.srcdoc = injectViewport(data.html);
 
     document.body.appendChild(iframe);
 
@@ -227,3 +241,4 @@ loadViewer();
 
 </body>
 </html>
+
