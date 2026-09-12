@@ -44,49 +44,39 @@ input{
   border-radius:4px;
 }
 
-/* Viewer Top Bar & Responsive Layout */
-.viewer-bar {
-  background: #1e293b;
-  padding: 10px 20px;
+/* Viewer Full Screen Layout with Footer */
+.viewer-container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #334155;
-}
-.view-btns button {
-  background: #334155;
-  margin: 0 3px;
-  padding: 6px 12px;
-  font-size: 13px;
-}
-.view-btns button.active {
-  background: #2563eb;
+  flex-direction: column;
+  height: 100vh;
+  margin: 0;
+  box-sizing: border-box;
 }
 .iframe-wrap {
-  display: flex;
-  justify-content: center;
+  flex-grow: 1;
+  width: 100%;
   background: #020617;
-  height: calc(100vh - 55px);
-  transition: all 0.3s ease;
 }
-.iframe-wrap.desktop {
-  width: 100%;
-}
-.iframe-wrap.mobile {
-  width: 100%;
-  padding: 20px 0;
-}
-.iframe-wrap.mobile iframe {
-  width: 375px;
-  height: 667px;
-  border: 8px solid #334155;
-  border-radius: 24px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-}
-.iframe-wrap.desktop iframe {
+.iframe-wrap iframe {
   width: 100%;
   height: 100%;
   border: none;
+}
+.cloud-footer {
+  background: #0f172a;
+  color: #94a3b8;
+  text-align: center;
+  padding: 8px 10px;
+  font-size: 12px;
+  border-top: 1px solid #334155;
+  flex-shrink: 0;
+}
+.cloud-footer a {
+  color: #38bdf8;
+  text-decoration: none;
+}
+.cloud-footer a:hover {
+  text-decoration: underline;
 }
 </style>
 </head>
@@ -229,7 +219,7 @@ async function generate(){
   }
 }
 
-// 🔥 VIEW MODE WITH TOGGLE BAR FOR GITHUB PAGES
+// 🔥 VIEW MODE WITH FULL SCREEN AND FOOTER
 async function loadViewer(){
 
   let params = new URLSearchParams(location.search);
@@ -259,17 +249,15 @@ async function loadViewer(){
       return;
     }
 
-    // BUILD VIEW PAGE WITH RESPONSIVE CONTROLS
+    // BUILD CLEAN VIEWER WITH FOOTER AT THE VERY END
     document.body.innerHTML = `
-      <div class="viewer-bar">
-        <span>⚡ MK Cloud Viewer</span>
-        <div class="view-btns">
-          <button id="desktopBtn" class="active" onclick="setViewMode('desktop')">💻 Desktop</button>
-          <button id="mobileBtn" onclick="setViewMode('mobile')">📱 Mobile</button>
+      <div class="viewer-container">
+        <div class="iframe-wrap">
+          <iframe id="cloudFrame"></iframe>
         </div>
-      </div>
-      <div id="iframeWrap" class="iframe-wrap desktop">
-        <iframe id="cloudFrame"></iframe>
+        <div class="cloud-footer">
+          <a href="https://t.me/mk_bots0" target="_blank">ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍᴋ_ʙᴏᴛs™ | ᴀʟʟ ʀɪɢʜᴛs ʀᴇsᴇʀᴠᴇᴅ ♡</a>
+        </div>
       </div>
     `;
 
@@ -277,23 +265,6 @@ async function loadViewer(){
 
   }catch(e){
     document.body.innerHTML="<h2 style='text-align:center;margin-top:20vh;'>⚠️ Error Loading Page</h2>";
-  }
-}
-
-// TOGGLE VIEW MODE FUNCTION
-function setViewMode(mode) {
-  let wrap = document.getElementById("iframeWrap");
-  let desktopBtn = document.getElementById("desktopBtn");
-  let mobileBtn = document.getElementById("mobileBtn");
-
-  if(mode === 'desktop'){
-    wrap.className = "iframe-wrap desktop";
-    desktopBtn.classList.add("active");
-    mobileBtn.classList.remove("active");
-  } else {
-    wrap.className = "iframe-wrap mobile";
-    mobileBtn.classList.add("active");
-    desktopBtn.classList.remove("active");
   }
 }
 
