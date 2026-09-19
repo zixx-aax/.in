@@ -94,6 +94,7 @@ input{
 <button onclick="preview()">Preview</button>
 <button onclick="saveLocal()">Save Local</button>
 <button onclick="generate()">Generate Link</button>
+<button onclick="updateExistingLink()" style="background:#16a34a;">Update Existing Link</button>
 
 <iframe id="previewFrame"></iframe>
 
@@ -172,6 +173,7 @@ async function generate(){
   if(!inputTime) return;
 
   let expireTime;
+  let customDomainPrefix = "";
 
   if(inputTime.trim().toLowerCase() === "permanent" || inputTime.trim().toLowerCase() === "p"){
     let pass = prompt("Enter password for permanent link:");
@@ -179,6 +181,15 @@ async function generate(){
       alert("❌ Incorrect password! Link creation cancelled.");
       return;
     }
+
+    let userDomain = prompt("Enter your registered domain name (leave blank to use GitHub format):");
+    if(userDomain && userDomain.trim() !== "") {
+      customDomainPrefix = userDomain.trim().replace(/\/+$/, "") + "/";
+    } else {
+      let repoName = prompt("Enter your GitHub repository name:", "my-html-repo");
+      customDomainPrefix = `Yourdomain.GitHub.${repoName || "reponame"}/`;
+    }
+
     expireTime = null;
   } else {
     let minutes = parseFloat(inputTime);
@@ -207,13 +218,58 @@ async function generate(){
     let json = await res.json();
     let binId = json.metadata.id;
 
-    let link = location.origin + location.pathname + "?id=" + binId;
+    let link;
+    if(expireTime === null && customDomainPrefix){
+      // Format with custom domain or GitHub format placeholder
+      link = "https://" + customDomainPrefix + "?id=" + binId;
+    } else {
+      link = location.origin + location.pathname + "?id=" + binId;
+    }
 
     document.getElementById("linkBox").innerHTML = `
       <p style="margin-top:10px; color:#38bdf8; font-size:14px;">🔗 Generated Link (${expireTime === null ? 'Permanent' : 'Temporary'}):</p>
       <input value="${link}" readonly onclick="this.select()">
     `;
 
+  }catch(e){
+    alert("Error: " + e.message);
+  }
+}
+
+// ✏️ UPDATE EXISTING LINK
+async function updateExistingLink(){
+  let binId = prompt("Enter the Bin ID (from the generated link URL ?id=...) that you want to update:");
+  if(!binId) return;
+
+  let pass = prompt("Enter password to edit this permanent link:");
+  if(pass !== "L"){
+    alert("❌ Incorrect password! Update cancelled.");
+    return;
+  }
+
+  let html = document.getElementById("code").value;
+  if(!html){ alert("Empty code!"); return; }
+
+  let data = {
+    html: html,
+    expire: null
+  };
+
+  try{
+    let res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+      method:"PUT",
+      headers:{
+        "Content-Type":"application/json",
+        "X-Master-Key":API_KEY
+      },
+      body: JSON.stringify(data)
+    });
+
+    if(res.ok){
+      alert("✅ Link code successfully updated!");
+    } else {
+      alert("❌ Failed to update link. Check your Bin ID.");
+    }
   }catch(e){
     alert("Error: " + e.message);
   }
