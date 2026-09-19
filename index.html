@@ -94,7 +94,7 @@ input{
 <button onclick="preview()">Preview</button>
 <button onclick="saveLocal()">Save Local</button>
 <button onclick="generate()">Generate Link</button>
-<button onclick="updateExistingLink()" style="background:#16a34a;">Update Existing Link</button>
+<button onclick="updateExistingLink()" style="background:#16a34a;">Edit Existing Link</button>
 
 <iframe id="previewFrame"></iframe>
 
@@ -173,7 +173,7 @@ async function generate(){
   if(!inputTime) return;
 
   let expireTime;
-  let customDomainPrefix = "";
+  let customLinkPrefix = "";
 
   if(inputTime.trim().toLowerCase() === "permanent" || inputTime.trim().toLowerCase() === "p"){
     let pass = prompt("Enter password for permanent link:");
@@ -182,12 +182,18 @@ async function generate(){
       return;
     }
 
-    let userDomain = prompt("Enter your registered domain name (leave blank to use GitHub format):");
-    if(userDomain && userDomain.trim() !== "") {
-      customDomainPrefix = userDomain.trim().replace(/\/+$/, "") + "/";
-    } else {
-      let repoName = prompt("Enter your GitHub repository name:", "my-html-repo");
-      customDomainPrefix = `Yourdomain.GitHub.${repoName || "reponame"}/`;
+    let domainInput = prompt("Enter your domain name (official domain e.g. mywebsite.com) OR username (e.g. mikachan) [Leave blank for default]:");
+    
+    if(domainInput && domainInput.trim() !== ""){
+      let val = domainInput.trim().toLowerCase();
+      if(val.includes(".")){
+        // It's an official domain
+        customLinkPrefix = "https://" + domainInput.trim().replace(/\/+$/, "") + "/";
+      } else {
+        // It's a GitHub username style
+        let repoName = prompt("Enter your GitHub repository name:", "reponame");
+        customLinkPrefix = "https://" + val + ".github." + (repoName ? repoName.trim() : "reponame") + "/";
+      }
     }
 
     expireTime = null;
@@ -202,7 +208,8 @@ async function generate(){
 
   let data = {
     html: html,
-    expire: expireTime
+    expire: expireTime,
+    protected: expireTime === null // Flag permanent links as protected
   };
 
   try{
@@ -219,9 +226,8 @@ async function generate(){
     let binId = json.metadata.id;
 
     let link;
-    if(expireTime === null && customDomainPrefix){
-      // Format with custom domain or GitHub format placeholder
-      link = "https://" + customDomainPrefix + "?id=" + binId;
+    if(expireTime === null && customLinkPrefix){
+      link = customLinkPrefix + "?id=" + binId;
     } else {
       link = location.origin + location.pathname + "?id=" + binId;
     }
@@ -236,14 +242,41 @@ async function generate(){
   }
 }
 
-// ✏️ UPDATE EXISTING LINK
+// ✏️ UPDATE/EDIT EXISTING LINK (WITH OWNERSHIP CHECK)
 async function updateExistingLink(){
-  let binId = prompt("Enter the Bin ID (from the generated link URL ?id=...) that you want to update:");
-  if(!binId) return;
+  let linkInput = prompt("Enter your full link or Bin ID to edit:");
+  if(!linkInput) return;
 
-  let pass = prompt("Enter password to edit this permanent link:");
+  // Extract Bin ID safely whether they paste the full link or just the ID
+  let binId = linkInput.trim();
+  if(linkInput.includes("?id=")) {
+    binId = linkInput.split("?id=")[1].split("&")[0];
+  }
+
+  // Verify link ownership/existence first
+  try {
+    let checkRes = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+      headers: { "X-Master-Key": API_KEY }
+    });
+    let checkJson = await checkRes.json();
+
+    if(!checkJson.record) {
+      alert("❌ Link/Bin not found!");
+      return;
+    }
+
+    if(checkJson.record.expire !== null) {
+      alert("❌ Only permanent links can be edited and updated.");
+      return;
+    }
+  } catch(err) {
+    alert("❌ Invalid Bin ID or link.");
+    return;
+  }
+
+  let pass = prompt("Enter the owner password to edit this link:");
   if(pass !== "L"){
-    alert("❌ Incorrect password! Update cancelled.");
+    alert("❌ Incorrect password! Ownership verification failed.");
     return;
   }
 
@@ -252,7 +285,8 @@ async function updateExistingLink(){
 
   let data = {
     html: html,
-    expire: null
+    expire: null,
+    protected: true
   };
 
   try{
@@ -266,9 +300,9 @@ async function updateExistingLink(){
     });
 
     if(res.ok){
-      alert("✅ Link code successfully updated!");
+      alert("✅ Link successfully updated with your new code!");
     } else {
-      alert("❌ Failed to update link. Check your Bin ID.");
+      alert("❌ Failed to update link.");
     }
   }catch(e){
     alert("Error: " + e.message);
