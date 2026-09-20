@@ -7,7 +7,7 @@
 <style>
 :root {
   --bg-dark: #030712;
-  --panel-bg: rgba(10, 15, 30, 0.82);
+  --panel-bg: rgba(10, 15, 30, 0.85);
   --border-color: rgba(56, 189, 248, 0.3);
   --accent-cyan: #38bdf8;
   --accent-blue: #2563eb;
@@ -190,6 +190,51 @@ body {
 .feature-card p {
   color: var(--text-muted);
   font-size: 13.5px;
+  line-height: 1.5;
+}
+
+/* How It Works Section */
+.workflow-section {
+  margin-top: 40px;
+  background: var(--panel-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 30px;
+  text-align: left;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+}
+.workflow-section h2 {
+  color: var(--accent-cyan);
+  margin-bottom: 20px;
+  font-size: 22px;
+}
+.workflow-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+}
+.step-box {
+  background: rgba(2, 6, 23, 0.6);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  padding: 16px;
+  border-radius: 12px;
+}
+.step-num {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--accent-cyan);
+  margin-bottom: 6px;
+}
+.step-title {
+  font-weight: 600;
+  color: #e2e8f0;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+.step-desc {
+  font-size: 12.5px;
+  color: var(--text-muted);
   line-height: 1.5;
 }
 
@@ -570,12 +615,21 @@ input[type="text"] {
   font-size: 13.5px;
 }
 
-/* Viewer Layout */
+/* Viewer Layout & Watermark Footer */
 .viewer-container { display: flex; flex-direction: column; height: 100vh; margin: 0; }
 .iframe-wrap { flex-grow: 1; width: 100%; background: #020617; }
 .iframe-wrap iframe { width: 100%; height: 100%; border: none; }
-.cloud-footer { background: #0f172a; color: var(--text-muted); text-align: center; padding: 10px; font-size: 12px; border-top: 1px solid var(--border-color); }
-.cloud-footer a { color: var(--accent-cyan); text-decoration: none; }
+.cloud-footer {
+  background: #0f172a;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 12px 10px;
+  font-size: 12px;
+  border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+.cloud-footer a { color: var(--accent-cyan); text-decoration: none; font-weight: 600; }
+.cloud-footer a:hover { text-decoration: underline; }
 </style>
 </head>
 
@@ -628,6 +682,28 @@ input[type="text"] {
       </div>
     </div>
 
+    <!-- HOW IT WORKS SECTION -->
+    <div class="workflow-section">
+      <h2>⚙️ How It Works</h2>
+      <div class="workflow-steps">
+        <div class="step-box">
+          <div class="step-num">01</div>
+          <div class="step-title">Write or Load Code</div>
+          <div class="step-desc">Type your HTML/CSS/JS code directly in the studio or pick a built-in starter template.</div>
+        </div>
+        <div class="step-box">
+          <div class="step-num">02</div>
+          <div class="step-title">Test Live Preview</div>
+          <div class="step-desc">Inspect your application in real-time with full mobile and desktop responsive viewport toggles.</div>
+        </div>
+        <div class="step-box">
+          <div class="step-num">03</div>
+          <div class="step-title">Deploy to Cloud</div>
+          <div class="step-desc">Generate a permanent or temporary shareable link secured by your master password.</div>
+        </div>
+      </div>
+    </div>
+
     <!-- DOCUMENTATION / FAQ SECTION -->
     <div class="doc-section">
       <h2>📖 Documentation & User Guide</h2>
@@ -638,7 +714,7 @@ input[type="text"] {
           <span>▼</span>
         </div>
         <div class="accordion-answer">
-          Type 'permanent' or 'p' when generating a link, enter your password (<strong>L</strong>), and the platform will generate a permanent cloud URL that never expires.
+          Type 'permanent' or 'p' when generating a link, enter your password (<strong>L</strong>), and the platform will generate a permanent cloud URL carrying your branded watermark footer.
         </div>
       </div>
 
@@ -669,7 +745,7 @@ input[type="text"] {
       <div class="social-grid">
         <a href="https://t.me/mk_bots0" target="_blank" class="social-card">📢 Telegram Channel</a>
         <a href="https://youtube.com/@tech_otc_tamil?si=iR8jcUcQG_UMLwYZ" target="_blank" class="social-card">▶ YouTube: Tech_otc_tamil</a>
-        <a href="https://github.com" target="_blank" class="social-card">💻 GitHub Projects</a>
+        <a href="mailto:OTCTECH3@GMAIL.COM" class="social-card">✉️ OTCTECH3@GMAIL.COM</a>
       </div>
     </div>
 
@@ -1061,7 +1137,7 @@ async function updateExistingLink(){
   }catch(e){ showToast("❌ Error updating link."); }
 }
 
-// VIEWER MODE
+// VIEWER MODE WITH WATERMARK FOOTER
 async function loadViewer(){
   let params = new URLSearchParams(location.search);
   let id = params.get("id");
@@ -1085,7 +1161,9 @@ async function loadViewer(){
     document.body.innerHTML = `
       <div class="viewer-container">
         <div class="iframe-wrap"><iframe id="cloudFrame"></iframe></div>
-        <div class="cloud-footer"><a href="https://t.me/mk_bots0" target="_blank">ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍᴋ_ʙᴏᴛs™ | ᴀʟʟ ʀɪɢʜᴛs ʀᴇsᴇʀᴠᴇᴅ ♡</a></div>
+        <div class="cloud-footer">
+          <a href="https://t.me/mk_bots0" target="_blank">ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍᴋ_ʙᴏᴛs™ | ᴀʟʟ ʀɪɢʜᴛs ʀᴇsᴇʀᴠᴇᴅ ♡</a>
+        </div>
       </div>
     `;
     document.getElementById("cloudFrame").srcdoc = injectViewport(data.html);
