@@ -3,13 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MK HTML Cloud Studio - Professional Cloud HTML & JS Workspace</title>
-
+<title>MK HTML Cloud Studio | Professional Cloud Workspace</title>
 <style>
-@keyframes gradientBG {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+:root {
+  --bg-dark: #030712;
+  --panel-bg: rgba(10, 15, 30, 0.85);
+  --border-color: rgba(56, 189, 248, 0.3);
+  --accent-cyan: #38bdf8;
+  --accent-blue: #2563eb;
+  --accent-purple: #818cf8;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Interactive Particle Canvas */
+#vfx-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrapper {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.98) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 @keyframes floatAnim {
@@ -18,46 +54,47 @@
 }
 
 @keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 15px rgba(37, 99, 235, 0.4); }
-  50% { box-shadow: 0 0 35px rgba(56, 189, 248, 0.8); }
-}
-
-body {
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(-45deg, #050b14, #0f172a, #1e1b4b, #090d16);
-  background-size: 400% 400%;
-  animation: gradientBG 18s ease infinite;
-  color: #f8fafc;
-  min-height: 100vh;
-  overflow-x: hidden;
+  0%, 100% { box-shadow: 0 0 20px rgba(37, 99, 235, 0.4); }
+  50% { box-shadow: 0 0 45px rgba(56, 189, 248, 0.8); }
 }
 
 /* Landing Page Styles */
 .landing-container {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: auto;
-  padding: 40px 20px;
+  padding: 50px 20px;
   text-align: center;
+  animation: fadeInScale 0.6s ease forwards;
 }
 
 .hero-badge {
-  display: inline-block;
-  background: rgba(56, 189, 248, 0.1);
-  color: #38bdf8;
-  padding: 6px 16px;
-  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--accent-cyan);
+  padding: 8px 18px;
+  border-radius: 30px;
   font-size: 13px;
   font-weight: 600;
-  border: 1px solid rgba(56, 189, 248, 0.3);
+  border: 1px solid rgba(56, 189, 248, 0.4);
   margin-bottom: 20px;
-  animation: floatAnim 3s ease-in-out infinite;
+  animation: floatAnim 3.5s ease-in-out infinite;
+  backdrop-filter: blur(12px);
+}
+
+.hero-badge span {
+  width: 8px;
+  height: 8px;
+  background: var(--accent-cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--accent-cyan);
 }
 
 .landing-title {
-  font-size: 42px;
+  font-size: clamp(34px, 5vw, 54px);
   font-weight: 800;
-  background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
+  background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 15px;
@@ -65,147 +102,285 @@ body {
 }
 
 .landing-subtitle {
-  color: #94a3b8;
-  font-size: 17px;
+  color: var(--text-muted);
+  font-size: clamp(15px, 1.8vw, 18px);
   max-width: 700px;
-  margin: 0 auto 35px auto;
+  margin: 0 auto 30px auto;
   line-height: 1.6;
 }
 
 .cta-btn {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, var(--accent-blue), #1d4ed8);
   color: white;
   border: none;
-  padding: 14px 32px;
+  padding: 15px 36px;
   font-size: 16px;
   font-weight: bold;
-  border-radius: 30px;
+  border-radius: 40px;
   cursor: pointer;
   animation: pulseGlow 2.5s infinite;
   transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4);
 }
 .cta-btn:hover {
-  transform: scale(1.05);
-  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(56, 189, 248, 0.6);
 }
 
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
-  margin-top: 50px;
+  margin-top: 40px;
   text-align: left;
 }
 
 .feature-card {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(51, 65, 85, 0.5);
-  border-radius: 14px;
+  background: var(--panel-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
   padding: 24px;
-  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  transition: transform 0.3s ease, border-color 0.3s ease;
 }
 .feature-card:hover {
   transform: translateY(-5px);
-  border-color: #38bdf8;
-  box-shadow: 0 10px 30px rgba(56, 189, 248, 0.15);
+  border-color: var(--accent-cyan);
+  box-shadow: 0 15px 35px rgba(56, 189, 248, 0.15);
 }
 
 .feature-card h3 {
-  color: #38bdf8;
-  margin-top: 0;
+  color: var(--accent-cyan);
+  margin-bottom: 10px;
   font-size: 18px;
 }
 .feature-card p {
-  color: #94a3b8;
-  font-size: 14px;
-  margin-bottom: 0;
+  color: var(--text-muted);
+  font-size: 13.5px;
   line-height: 1.5;
+}
+
+/* Documentation / FAQ Accordion */
+.doc-section {
+  margin-top: 40px;
+  background: var(--panel-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 30px;
+  text-align: left;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+}
+.doc-section h2 {
+  color: var(--accent-cyan);
+  margin-bottom: 15px;
+  font-size: 22px;
+}
+.accordion-item {
+  border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+  padding: 14px 0;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.accordion-question {
+  font-weight: 600;
+  color: #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14.5px;
+}
+.accordion-answer {
+  color: var(--text-muted);
+  font-size: 13.5px;
+  margin-top: 10px;
+  line-height: 1.6;
+  display: none;
+  animation: fadeInScale 0.3s ease forwards;
+}
+.accordion-item.active .accordion-answer {
+  display: block;
+}
+
+/* Follow Us Social Section */
+.social-section {
+  margin-top: 40px;
+  text-align: center;
+}
+.social-section h3 {
+  color: #cbd5e1;
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+.social-grid {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+.social-card {
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  padding: 12px 26px;
+  border-radius: 30px;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 13.5px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.social-card:hover {
+  background: rgba(30, 41, 59, 0.9);
+  border-color: var(--accent-cyan);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(56, 189, 248, 0.4);
+}
+
+/* About Section */
+.about-section {
+  margin-top: 40px;
+  background: var(--panel-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 30px;
+  text-align: left;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+}
+.about-section h2 {
+  color: var(--accent-cyan);
+  margin-bottom: 12px;
+  font-size: 22px;
+}
+.about-section p {
+  color: var(--text-muted);
+  line-height: 1.6;
+  font-size: 14px;
+  margin-bottom: 12px;
 }
 
 /* App Studio Workspace Styles */
 .app-container {
-  max-width: 900px;
+  max-width: 1100px;
   margin: auto;
-  padding: 20px;
+  padding: 25px 20px;
   display: none;
+  animation: fadeInScale 0.4s ease forwards;
 }
 
 .app-header-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  background: var(--panel-bg);
+  backdrop-filter: blur(16px);
+  padding: 14px 22px;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
 
-h2 {
+.app-header-bar h2 {
   background: linear-gradient(90deg, #38bdf8, #818cf8);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-size: 26px;
-  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.workspace-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 20px;
+}
+@media(max-width: 900px) {
+  .workspace-grid { grid-template-columns: 1fr; }
 }
 
 .editor-box {
-  background: rgba(2, 6, 23, 0.8);
+  background: var(--panel-bg);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(51, 65, 85, 0.6);
-  border-radius: 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
   padding: 18px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7);
+}
+
+.editor-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.template-dropdown {
+  background: #020617;
+  color: var(--accent-cyan);
+  border: 1px solid var(--border-color);
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  outline: none;
 }
 
 textarea {
   width: 100%;
-  height: 280px;
-  background: #020617;
+  height: 320px;
+  background: rgba(2, 6, 23, 0.9);
   color: #4ade80;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 14px;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.5;
   padding: 14px;
-  border: 1px solid #334155;
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   box-sizing: border-box;
   resize: vertical;
   outline: none;
-  transition: all 0.2s;
 }
 textarea:focus {
-  border-color: #38bdf8;
-  box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.25);
 }
 
 .btn-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
   margin-top: 12px;
 }
 
 button {
-  padding: 10px 16px;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  padding: 9px 16px;
+  background: linear-gradient(135deg, var(--accent-blue), #1d4ed8);
   color: white;
   border: none;
   cursor: pointer;
   border-radius: 8px;
-  font-weight: bold;
-  font-size: 13px;
-  transition: all 0.25s ease;
+  font-weight: 600;
+  font-size: 12.5px;
+  transition: all 0.2s ease;
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
 button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
+  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
 }
 
-.btn-green {
-  background: linear-gradient(135deg, #16a34a, #15803d) !important;
-  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3) !important;
-}
-.btn-secondary {
-  background: linear-gradient(135deg, #475569, #334155) !important;
-}
+.btn-green { background: linear-gradient(135deg, #16a34a, #15803d) !important; }
+.btn-purple { background: linear-gradient(135deg, #7c3aed, #6d28d9) !important; }
+.btn-secondary { background: linear-gradient(135deg, #475569, #334155) !important; box-shadow: none !important; }
 
 .preview-wrapper {
   position: relative;
@@ -218,60 +393,66 @@ button:hover {
   align-items: center;
   background: #1e293b;
   padding: 8px 14px;
-  border-radius: 8px 8px 0 0;
-  font-size: 13px;
+  border-radius: 10px 10px 0 0;
+  font-size: 12.5px;
   color: #cbd5e1;
+  border: 1px solid var(--border-color);
+  border-bottom: none;
 }
 
 iframe {
   width: 100%;
   height: 300px;
   background: white;
-  border: 1px solid #334155;
-  border-radius: 0 0 8px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 0 0 10px 10px;
 }
 
-/* Full Screen Overlay Modal */
-.fullscreen-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: #050b14;
-  z-index: 9999;
+/* Sidebar History */
+.sidebar-panel {
+  background: var(--panel-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
+  max-height: 560px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
-.fullscreen-bar {
-  background: #020617;
-  padding: 12px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #334155;
+
+.sidebar-panel h3 {
+  font-size: 15px;
+  margin-bottom: 12px;
+  color: #cbd5e1;
 }
-.fullscreen-overlay iframe {
+
+.history-list {
+  overflow-y: auto;
   flex-grow: 1;
-  height: auto;
-  border: none;
-  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 4px;
 }
+.history-list::-webkit-scrollbar { width: 5px; }
+.history-list::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
 
 .card {
   background: rgba(2, 6, 23, 0.6);
-  backdrop-filter: blur(8px);
-  padding: 12px;
-  margin-top: 8px;
-  border: 1px solid rgba(51, 65, 85, 0.5);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  padding: 10px 12px;
   cursor: pointer;
   border-radius: 8px;
   transition: all 0.2s;
+  font-size: 12.5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .card:hover {
-  background: rgba(30, 41, 59, 0.8);
-  border-color: #38bdf8;
-  transform: translateX(4px);
+  background: rgba(30, 41, 59, 0.9);
+  border-color: var(--accent-cyan);
 }
 
 input[type="text"] {
@@ -279,130 +460,357 @@ input[type="text"] {
   padding: 10px;
   margin-top: 8px;
   background: #020617;
-  color: #38bdf8;
-  border: 1px solid #334155;
+  color: var(--accent-cyan);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   box-sizing: border-box;
   outline: none;
+  font-size: 13px;
 }
 
-/* Viewer Full Screen Layout with Footer */
-.viewer-container {
+/* Full Screen Modal */
+.fullscreen-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: var(--bg-dark);
+  z-index: 9999;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  margin: 0;
-  box-sizing: border-box;
 }
-.iframe-wrap {
+.fullscreen-bar {
+  background: var(--panel-bg);
+  backdrop-filter: blur(16px);
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+}
+.device-toggles { display: flex; gap: 6px; }
+.device-btn {
+  padding: 5px 10px;
+  font-size: 11.5px;
+  background: #1e293b;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.device-btn.active { background: var(--accent-blue); color: white; border-color: var(--accent-cyan); }
+
+.fullscreen-viewport-wrap {
   flex-grow: 1;
-  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background: #020617;
+  overflow: hidden;
+  padding: 15px;
 }
-.iframe-wrap iframe {
+.fullscreen-viewport-wrap iframe {
   width: 100%;
   height: 100%;
   border: none;
-  border-radius: 0;
+  border-radius: 6px;
+  background: white;
 }
-.cloud-footer {
-  background: #0f172a;
-  color: #94a3b8;
-  text-align: center;
-  padding: 10px;
-  font-size: 12px;
-  border-top: 1px solid #334155;
-  flex-shrink: 0;
+.fullscreen-viewport-wrap.mobile iframe {
+  width: 375px;
+  height: 680px;
+  box-shadow: 0 0 40px rgba(0,0,0,0.8);
+  border: 6px solid #1e293b;
 }
-.cloud-footer a {
-  color: #38bdf8;
-  text-decoration: none;
+
+/* Toast */
+#toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #1e293b;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--accent-cyan);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+  z-index: 10000;
+  display: none;
+  font-size: 13.5px;
 }
-.cloud-footer a:hover {
-  text-decoration: underline;
-}
+
+/* Viewer Layout */
+.viewer-container { display: flex; flex-direction: column; height: 100vh; margin: 0; }
+.iframe-wrap { flex-grow: 1; width: 100%; background: #020617; }
+.iframe-wrap iframe { width: 100%; height: 100%; border: none; }
+.cloud-footer { background: #0f172a; color: var(--text-muted); text-align: center; padding: 10px; font-size: 12px; border-top: 1px solid var(--border-color); }
+.cloud-footer a { color: var(--accent-cyan); text-decoration: none; }
 </style>
 </head>
 
 <body>
 
-<!-- LANDING PAGE VIEW -->
-<div id="landingView" class="landing-container">
-  <div class="hero-badge">⚡ Professional Cloud HTML Suite</div>
-  <h1 class="landing-title">MK HTML Cloud Studio</h1>
-  <p class="landing-subtitle">
-    Write, test, preview, and host your HTML, CSS, and JavaScript apps instantly in the cloud. Create permanent secure links or temporary snippets with lightning speed.
-  </p>
-  <button class="cta-btn" onclick="openStudio()">🚀 Get Started</button>
+<!-- Interactive Particle Mesh Canvas Background -->
+<canvas id="vfx-canvas"></canvas>
 
-  <div class="features-grid">
-    <div class="feature-card">
-      <h3>⚡ Instant Live Preview</h3>
-      <p>Test your code live inside high-performance responsive frames with full support for modern CSS and JS.</p>
+<div class="wrapper">
+
+  <!-- LANDING PAGE -->
+  <div id="landingView" class="landing-container">
+    <div class="hero-badge">
+      <span></span> Next-Gen Cloud Development Suite
     </div>
-    <div class="feature-card">
-      <h3>🔗 Permanent & Secure Links</h3>
-      <p>Generate shareable links instantly. Create permanent pages protected by password or temporary time-bound test links.</p>
-    </div>
-    <div class="feature-card">
-      <h3>✏️ Editable Cloud Links</h3>
-      <p>Made a mistake or want to upgrade your code? Easily edit and update your existing permanent cloud links anytime.</p>
-    </div>
-  </div>
-</div>
+    <h1 class="landing-title">MK HTML Cloud Studio</h1>
+    <p class="landing-subtitle">
+      An ultra-fast, professional cloud workspace to code, test live responsive previews, and deploy permanent or temporary secure web applications instantly.
+    </p>
+    <button class="cta-btn" onclick="openStudio()">🚀 Launch Studio Workspace</button>
 
-<!-- APP STUDIO WORKSPACE VIEW -->
-<div id="appView" class="app-container">
-  <div class="app-header-bar">
-    <h2>⚡ MK HTML Cloud Studio</h2>
-    <button class="btn-secondary" onclick="returnToLanding()">🏠 Home</button>
-  </div>
-
-  <div class="editor-box">
-    <textarea id="code" placeholder="Write or paste your stunning HTML code here..."></textarea>
-
-    <div class="btn-group">
-      <button onclick="preview()">▶ Preview</button>
-      <button onclick="openFullscreenPreview()" style="background: linear-gradient(135deg, #7c3aed, #6d28d9);">🔍 Full Screen</button>
-      <button onclick="saveLocal()">💾 Save Local</button>
-      <button onclick="generate()">🚀 Generate Link</button>
-      <button class="btn-green" onclick="updateExistingLink()">✏️ Edit Existing Link</button>
-    </div>
-
-    <div class="preview-wrapper">
-      <div class="preview-header-bar">
-        <span>Live Render Box</span>
-        <span style="font-size:11px; color:#38bdf8;">⚡ High Performance</span>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>⚡ High-Performance Preview</h3>
+        <p>Instant rendering engine with responsive viewport support and live debugging compatibility.</p>
       </div>
-      <iframe id="previewFrame"></iframe>
+      <div class="feature-card">
+        <h3>🔗 Permanent & Secure Links</h3>
+        <p>Deploy secure cloud endpoints instantly. Create permanent password-protected apps or temporary test links.</p>
+      </div>
+      <div class="feature-card">
+        <h3>✏️ Live Cloud Link Editing</h3>
+        <p>Never lose your updates. Securely verify your credentials and push real-time code updates to existing URLs.</p>
+      </div>
     </div>
 
-    <div id="linkBox"></div>
+    <!-- DOCUMENTATION / FAQ SECTION -->
+    <div class="doc-section">
+      <h2>📖 Documentation & User Guide</h2>
+      
+      <div class="accordion-item" onclick="toggleAccordion(this)">
+        <div class="accordion-question">
+          <span>How do I create a permanent cloud link?</span>
+          <span>▼</span>
+        </div>
+        <div class="accordion-answer">
+          Type 'permanent' or 'p' when generating a link, enter your password (<strong>L</strong>), and the platform will generate a permanent cloud URL that never expires.
+        </div>
+      </div>
+
+      <div class="accordion-item" onclick="toggleAccordion(this)">
+        <div class="accordion-question">
+          <span>Can I edit my code after generating a link?</span>
+          <span>▼</span>
+        </div>
+        <div class="accordion-answer">
+          Yes! Click the 'Edit Link' button in the studio, enter your link or Bin ID along with your password (<strong>L</strong>), and your code will instantly update without changing the URL.
+        </div>
+      </div>
+
+      <div class="accordion-item" onclick="toggleAccordion(this)">
+        <div class="accordion-question">
+          <span>Are my local files safe?</span>
+          <span>▼</span>
+        </div>
+        <div class="accordion-answer">
+          All local projects are securely saved inside your browser's local storage history so you can retrieve and load them anytime.
+        </div>
+      </div>
+    </div>
+
+    <!-- FOLLOW US SOCIAL SECTION -->
+    <div class="social-section">
+      <h3>🌐 Connect & Follow Us</h3>
+      <div class="social-grid">
+        <a href="https://t.me/mk_bots0" target="_blank" class="social-card">📢 Telegram Channel</a>
+        <a href="https://youtube.com/@Tech_otc" target="_blank" class="social-card">▶ YouTube: Tech_otc</a>
+        <a href="https://github.com" target="_blank" class="social-card">💻 GitHub Projects</a>
+      </div>
+    </div>
+
+    <!-- ABOUT US SECTION -->
+    <div class="about-section">
+      <h2>About MK HTML Cloud Studio</h2>
+      <p>
+        MK HTML Cloud Studio is built by <strong>MK_BOTS™</strong> to provide developers, creators, and hobbyists with a frictionless, high-speed environment to write and host standalone HTML/CSS/JS applications directly in the cloud without complex backend configurations.
+      </p>
+    </div>
   </div>
 
-  <h3 style="margin-top: 25px; color:#cbd5e1;">📁 Local Files History</h3>
-  <div id="historyList"></div>
+  <!-- APP STUDIO WORKSPACE -->
+  <div id="appView" class="app-container">
+    <div class="app-header-bar">
+      <h2>⚡ MK HTML Cloud Studio</h2>
+      <button class="btn-secondary" onclick="returnToLanding()">🏠 Home</button>
+    </div>
+
+    <div class="workspace-grid">
+      <!-- Main Editor Column -->
+      <div class="editor-box">
+        <div class="editor-toolbar">
+          <span>HTML / JS Code Workspace</span>
+          <div>
+            <select class="template-dropdown" onchange="loadTemplate(this)">
+              <option value="">✨ Load Template...</option>
+              <option value="basic">Basic HTML5 Shell</option>
+              <option value="tailwind">Tailwind CSS Starter</option>
+              <option value="game">Interactive Canvas Game</option>
+            </select>
+            <button class="btn-secondary" style="padding: 4px 8px; margin-left: 4px;" onclick="clearEditor()">Clear</button>
+          </div>
+        </div>
+
+        <textarea id="code" placeholder="Write or paste your stunning code here..." oninput="updateStats()"></textarea>
+        <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted); margin-top:4px;">
+          <span id="charCount">Characters: 0</span>
+          <span id="lineCount">Lines: 0</span>
+        </div>
+
+        <div class="btn-group">
+          <button onclick="preview()">▶ Run Preview</button>
+          <button class="btn-purple" onclick="openFullscreenPreview()">🔍 Full Screen</button>
+          <button onclick="saveLocal()">💾 Save Local</button>
+          <button onclick="generate()">🚀 Generate Link</button>
+          <button class="btn-green" onclick="updateExistingLink()">✏️ Edit Link</button>
+        </div>
+
+        <div class="preview-wrapper">
+          <div class="preview-header-bar">
+            <span>Live Render Output</span>
+            <span style="font-size:11px; color:var(--accent-cyan);">⚡ Optimized Engine</span>
+          </div>
+          <iframe id="previewFrame"></iframe>
+        </div>
+
+        <div id="linkBox"></div>
+      </div>
+
+      <!-- Sidebar History Panel -->
+      <div class="sidebar-panel">
+        <h3>📁 Local History</h3>
+        <div id="historyList" class="history-list"></div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- Full Screen Preview Overlay Modal -->
 <div id="fullscreenOverlay" class="fullscreen-overlay" style="display:none;">
   <div class="fullscreen-bar">
-    <span style="font-weight:bold; color:#38bdf8;">🌐 Full Screen Live Preview</span>
-    <button onclick="closeFullscreenPreview()" style="background:#dc2626; padding: 6px 14px;">✕ Close</button>
+    <span style="font-weight:bold; color:var(--accent-cyan);">🌐 Full Screen Preview Suite</span>
+    <div class="device-toggles">
+      <button class="device-btn active" onclick="setDeviceMode('desktop', this)">💻 Desktop</button>
+      <button class="device-btn" onclick="setDeviceMode('mobile', this)">📱 Mobile</button>
+    </div>
+    <button class="btn-secondary" style="background:#dc2626 !important;" onclick="closeFullscreenPreview()">✕ Close</button>
   </div>
-  <iframe id="fullscreenFrame"></iframe>
+  <div id="viewportWrap" class="fullscreen-viewport-wrap">
+    <iframe id="fullscreenFrame"></iframe>
+  </div>
 </div>
 
-<script>
+<!-- Toast Notification Element -->
+<div id="toast">Notification Message</div>
 
+<script>
 // 🔴 API KEY
 const API_KEY = "$2a$10$8yhV85AJmo2nIR.wx9d2F.I6dTxt5NnpIKdZs9qqKWzB6ZAI9NUhG";
 
-// VIEW SWITCHING
+// ACCORDION TOGGLE
+function toggleAccordion(el) {
+  el.classList.toggle("active");
+  let arrow = el.querySelector(".accordion-question span:last-child");
+  arrow.innerText = el.classList.contains("active") ? "▲" : "▼";
+}
+
+// INTERACTIVE PARTICLE MESH BACKGROUND ENGINE
+const canvas = document.getElementById("vfx-canvas");
+const ctx = canvas.getContext("2d");
+let particles = [];
+let mouse = { x: null, y: null, radius: 140 };
+
+window.addEventListener("mousemove", (e) => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+});
+
+window.addEventListener("mouseout", () => {
+  mouse.x = null;
+  mouse.y = null;
+});
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+for(let i=0; i<70; i++) {
+  particles.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    vx: (Math.random() - 0.5) * 0.7,
+    vy: (Math.random() - 0.5) * 0.7,
+    radius: Math.random() * 2.2 + 0.8
+  });
+}
+
+function animateVFX() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "rgba(56, 189, 248, 0.45)";
+  ctx.strokeStyle = "rgba(56, 189, 248, 0.08)";
+
+  particles.forEach((p, index) => {
+    p.x += p.vx;
+    p.y += p.vy;
+    if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+    if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+    // Mouse Interaction Physics
+    if(mouse.x !== null && mouse.y !== null) {
+      let dist = Math.hypot(p.x - mouse.x, p.y - mouse.y);
+      if(dist < mouse.radius) {
+        let angle = Math.atan2(p.y - mouse.y, p.x - mouse.x);
+        p.x += Math.cos(angle) * 1.5;
+        p.y += Math.sin(angle) * 1.5;
+      }
+    }
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    for(let j = index + 1; j < particles.length; j++) {
+      let p2 = particles[j];
+      let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+      if(dist < 130) {
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+    }
+  });
+
+  requestAnimationFrame(animateVFX);
+}
+animateVFX();
+
+// TOAST NOTIFICATION
+function showToast(msg) {
+  let t = document.getElementById("toast");
+  t.innerText = msg;
+  t.style.display = "block";
+  setTimeout(() => { t.style.display = "none"; }, 3000);
+}
+
+// VIEW NAVIGATION
 function openStudio(){
   document.getElementById("landingView").style.display = "none";
   document.getElementById("appView").style.display = "block";
   loadHistory();
+  if(!document.getElementById("code").value) {
+    loadTemplate({value: "basic"});
+  }
 }
 
 function returnToLanding(){
@@ -410,7 +818,39 @@ function returnToLanding(){
   document.getElementById("landingView").style.display = "block";
 }
 
-// HELPER: Responsive Viewport injection
+// TEMPLATES
+const templates = {
+  basic: `<!DOCTYPE html>\n<html>\n<head>\n<title>My App</title>\n<style>\nbody { font-family: sans-serif; text-align: center; padding-top: 20vh; background: #0f172a; color: white; }\nh1 { color: #38bdf8; }\n</style>\n</head>\n<body>\n  <h1>Hello World!</h1>\n  <p>Built with MK HTML Cloud Studio</p>\n</body>\n</html>`,
+  tailwind: `<!DOCTYPE html>\n<html>\n<head>\n<script src="https://cdn.tailwindcss.com"><\/script>\n</head>\n<body class="bg-slate-950 text-white flex items-center justify-center h-screen">\n  <div class="text-center p-8 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl">\n    <h1 class="text-3xl font-bold text-sky-400 mb-2">Tailwind Ready 🚀</h1>\n    <p class="text-slate-400">Design modern web apps instantly.</p>\n  </div>\n</body>\n</html>`,
+  game: `<!DOCTYPE html>\n<html>\n<head>\n<style>\nbody { background: #020617; color: white; text-align: center; font-family: sans-serif; }\ncanvas { background: #0f172a; border: 2px solid #334155; margin-top: 20px; border-radius: 8px; }\n</style>\n</head>\n<body>\n  <h2>Mini Bounce Game</h2>\n  <canvas id="game" width="400" height="250"></canvas>\n  <script>\n    const ctx = document.getElementById('game').getContext('2d');\n    let y = 50, vy = 2;\n    function loop() {\n      ctx.clearRect(0,0,400,250);\n      ctx.fillStyle = '#38bdf8'; ctx.beginPath(); ctx.arc(200, y, 15, 0, Math.PI*2);\n      ctx.fill();\n      y += vy; if(y > 230 || y < 20) vy *= -1;\n      requestAnimationFrame(loop);\n    }\n    loop();\n  <\/script>\n</body>\n</html>`
+};
+
+function loadTemplate(select) {
+  let val = select.value;
+  if(templates[val]) {
+    document.getElementById("code").value = templates[val];
+    preview();
+    updateStats();
+    showToast("✨ Template loaded successfully!");
+  }
+  select.value = "";
+}
+
+function clearEditor() {
+  if(confirm("Clear editor code?")) {
+    document.getElementById("code").value = "";
+    preview();
+    updateStats();
+  }
+}
+
+function updateStats() {
+  let val = document.getElementById("code").value;
+  document.getElementById("charCount").innerText = "Characters: " + val.length;
+  document.getElementById("lineCount").innerText = "Lines: " + val.split("\n").length;
+}
+
+// VIEWPORT INJECTION
 function injectViewport(html) {
   if (!/<meta\s+name=["']viewport["']/i.test(html)) {
     if (/<head>/i.test(html)) {
@@ -430,10 +870,10 @@ function preview(){
   document.getElementById("previewFrame").srcdoc = injectViewport(code);
 }
 
-// FULL SCREEN PREVIEW MODAL
+// FULL SCREEN MODAL
 function openFullscreenPreview(){
   let code = document.getElementById("code").value;
-  if(!code) { alert("Empty code!"); return; }
+  if(!code) { showToast("⚠️ Editor is empty!"); return; }
   document.getElementById("fullscreenFrame").srcdoc = injectViewport(code);
   document.getElementById("fullscreenOverlay").style.display = "flex";
 }
@@ -443,19 +883,28 @@ function closeFullscreenPreview(){
   document.getElementById("fullscreenFrame").srcdoc = "";
 }
 
+function setDeviceMode(mode, btn) {
+  document.querySelectorAll(".device-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  let wrap = document.getElementById("viewportWrap");
+  if(mode === 'mobile') {
+    wrap.classList.add("mobile");
+  } else {
+    wrap.classList.remove("mobile");
+  }
+}
+
 // SAVE LOCAL
 function saveLocal(){
   let name = prompt("Enter local file name:");
   if(!name) return;
-
   let files = JSON.parse(localStorage.getItem("mk_files") || "{}");
   files[name] = document.getElementById("code").value;
-
   localStorage.setItem("mk_files", JSON.stringify(files));
   loadHistory();
+  showToast("💾 File saved locally!");
 }
 
-// LOAD HISTORY
 function loadHistory(){
   let files = JSON.parse(localStorage.getItem("mk_files") || "{}");
   let box = document.getElementById("historyList");
@@ -463,196 +912,141 @@ function loadHistory(){
   box.innerHTML = "";
 
   if(Object.keys(files).length === 0){
-    box.innerHTML = "<p style='color:#64748b; font-size:13px;'>No saved local files yet.</p>";
+    box.innerHTML = "<p style='color:var(--text-muted); font-size:13px; text-align:center; padding:20px;'>No local files saved yet.</p>";
     return;
   }
 
   for(let name in files){
     let div = document.createElement("div");
     div.className = "card";
-    div.innerHTML = `📄 <b>${name}</b>`;
-
+    div.innerHTML = `📄 <b>${name}</b> <span style="color:var(--accent-cyan); font-size:11px;">Load →</span>`;
     div.onclick = function(){
       document.getElementById("code").value = files[name];
       preview();
+      updateStats();
+      showToast(`📂 Loaded '${name}'`);
     }
     box.appendChild(div);
   }
 }
 
-// 🚀 GENERATE LINK
+// GENERATE CLOUD LINK
 async function generate(){
   let html = document.getElementById("code").value;
-  if(!html){ alert("Empty code!"); return; }
+  if(!html){ showToast("⚠️ Code cannot be empty!"); return; }
 
   let inputTime = prompt("Enter expire time in minutes, or type 'permanent':");
   if(!inputTime) return;
 
   let expireTime;
-
   if(inputTime.trim().toLowerCase() === "permanent" || inputTime.trim().toLowerCase() === "p"){
     let pass = prompt("Enter password for permanent link:");
     if(pass !== "L"){
-      alert("❌ Incorrect password! Link creation cancelled.");
+      showToast("❌ Incorrect password!");
       return;
     }
     expireTime = null;
   } else {
     let minutes = parseFloat(inputTime);
     if(isNaN(minutes) || minutes <= 0){
-      alert("Please enter a valid number of minutes or 'permanent'.");
+      showToast("⚠️ Enter valid minutes or 'permanent'.");
       return;
     }
     expireTime = Date.now() + (minutes * 60000);
   }
 
-  let data = {
-    html: html,
-    expire: expireTime,
-    protected: expireTime === null
-  };
-
+  showToast("⏳ Generating cloud link...");
   try{
     let res = await fetch("https://api.jsonbin.io/v3/b", {
       method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "X-Master-Key":API_KEY
-      },
-      body: JSON.stringify(data)
+      headers:{ "Content-Type":"application/json", "X-Master-Key":API_KEY },
+      body: JSON.stringify({ html: html, expire: expireTime, protected: expireTime === null })
     });
-
     let json = await res.json();
-    let binId = json.metadata.id;
-
-    let link = location.origin + location.pathname + "?id=" + binId;
+    let link = location.origin + location.pathname + "?id=" + json.metadata.id;
 
     document.getElementById("linkBox").innerHTML = `
-      <p style="margin-top:12px; color:#38bdf8; font-size:14px; font-weight:bold;">🔗 Generated Link (${expireTime === null ? 'Permanent' : 'Temporary'}):</p>
+      <p style="margin-top:12px; color:var(--accent-cyan); font-size:13.5px; font-weight:bold;">🔗 Generated Link (${expireTime === null ? 'Permanent' : 'Temporary'}):</p>
       <input type="text" value="${link}" readonly onclick="this.select()">
     `;
-
+    showToast("✅ Cloud link generated successfully!");
   }catch(e){
-    alert("Error: " + e.message);
+    showToast("❌ Error generating link.");
   }
 }
 
-// ✏️ EDIT / UPDATE EXISTING LINK
+// EDIT EXISTING LINK
 async function updateExistingLink(){
   let linkInput = prompt("Enter your full link or Bin ID to edit:");
   if(!linkInput) return;
-
   let binId = linkInput.trim();
-  if(linkInput.includes("?id=")) {
-    binId = linkInput.split("?id=")[1].split("&")[0];
-  }
+  if(linkInput.includes("?id=")) { binId = linkInput.split("?id=")[1].split("&")[0]; }
 
   try {
-    let checkRes = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
-      headers: { "X-Master-Key": API_KEY }
-    });
+    let checkRes = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, { headers: { "X-Master-Key": API_KEY } });
     let checkJson = await checkRes.json();
-
-    if(!checkJson.record) {
-      alert("❌ Link/Bin not found!");
-      return;
-    }
-
+    if(!checkJson.record) { showToast("❌ Bin not found!"); return; }
     if(checkJson.record.expire !== null && checkJson.record.expire !== undefined) {
-      alert("❌ Only permanent links can be updated.");
+      showToast("❌ Only permanent links can be edited.");
       return;
     }
   } catch(err) {
-    alert("❌ Invalid Bin ID or link.");
+    showToast("❌ Invalid Bin ID.");
     return;
   }
 
-  let pass = prompt("Enter owner password (L) to update this link:");
-  if(pass !== "L"){
-    alert("❌ Incorrect password! Update denied.");
-    return;
-  }
+  let pass = prompt("Enter owner password (L) to update link:");
+  if(pass !== "L"){ showToast("❌ Incorrect password!"); return; }
 
   let html = document.getElementById("code").value;
-  if(!html){ alert("Empty code!"); return; }
+  if(!html){ showToast("⚠️ Code is empty!"); return; }
 
-  let data = {
-    html: html,
-    expire: null,
-    protected: true
-  };
-
+  showToast("⏳ Updating cloud link...");
   try{
     let res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
       method:"PUT",
-      headers:{
-        "Content-Type":"application/json",
-        "X-Master-Key":API_KEY
-      },
-      body: JSON.stringify(data)
+      headers:{ "Content-Type":"application/json", "X-Master-Key":API_KEY },
+      body: JSON.stringify({ html: html, expire: null, protected: true })
     });
-
-    if(res.ok){
-      alert("✅ Link successfully updated with new code!");
-    } else {
-      alert("❌ Failed to update link.");
-    }
-  }catch(e){
-    alert("Error: " + e.message);
-  }
+    if(res.ok){ showToast("✅ Link successfully updated!"); }
+    else { showToast("❌ Failed to update link."); }
+  }catch(e){ showToast("❌ Error updating link."); }
 }
 
-// 🔥 VIEW MODE WITH FULL SCREEN AND FOOTER
+// VIEWER MODE
 async function loadViewer(){
   let params = new URLSearchParams(location.search);
   let id = params.get("id");
-
   if(!id) return;
 
-  // Hide landing/app and switch immediately to viewer
   document.getElementById("landingView").style.display = "none";
   document.getElementById("appView").style.display = "none";
 
   try{
-    let res = await fetch(`https://api.jsonbin.io/v3/b/${id}/latest`, {
-      headers:{ "X-Master-Key":API_KEY }
-    });
-
+    let res = await fetch(`https://api.jsonbin.io/v3/b/${id}/latest`, { headers:{ "X-Master-Key":API_KEY } });
     let json = await res.json();
-
     if(!json.record){
-      document.body.innerHTML="<h2 style='text-align:center;margin-top:20vh; color:#ef4444;'>❌ Page Not Found</h2>";
+      document.body.innerHTML="<h2 style='text-align:center;margin-top:25vh; color:#ef4444;'>❌ Page Not Found</h2>";
       return;
     }
-
     let data = json.record;
-
     if(data.expire !== null && data.expire !== undefined && Date.now() > data.expire){
-      document.body.innerHTML="<h2 style='text-align:center;margin-top:20vh; color:#f59e0b;'>⛔ This link has expired.</h2>";
+      document.body.innerHTML="<h2 style='text-align:center;margin-top:25vh; color:#f59e0b;'>⛔ This link has expired.</h2>";
       return;
     }
-
     document.body.innerHTML = `
       <div class="viewer-container">
-        <div class="iframe-wrap">
-          <iframe id="cloudFrame"></iframe>
-        </div>
-        <div class="cloud-footer">
-          <a href="https://t.me/mk_bots0" target="_blank">ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍᴋ_ʙᴏᴛs™ | ᴀʟʟ ʀɪɢʜᴛs ʀᴇsᴇʀᴠᴇᴅ ♡</a>
-        </div>
+        <div class="iframe-wrap"><iframe id="cloudFrame"></iframe></div>
+        <div class="cloud-footer"><a href="https://t.me/mk_bots0" target="_blank">ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍᴋ_ʙᴏᴛs™ | ᴀʟʟ ʀɪɢʜᴛs ʀᴇsᴇʀᴠᴇᴅ ♡</a></div>
       </div>
     `;
-
     document.getElementById("cloudFrame").srcdoc = injectViewport(data.html);
-
   }catch(e){
-    document.body.innerHTML="<h2 style='text-align:center;margin-top:20vh; color:#ef4444;'>⚠️ Error Loading Page</h2>";
+    document.body.innerHTML="<h2 style='text-align:center;margin-top:25vh; color:#ef4444;'>⚠️ Error Loading Page</h2>";
   }
 }
 
-// INIT
 loadViewer();
-
 </script>
 
 </body>
