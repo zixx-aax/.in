@@ -1,50 +1,25 @@
-
 # ⚡ MK HTML Cloud Studio (Permanent & Secure)
 
-MK HTML Cloud Studio is a fast, lightweight, browser-based editor that allows users to write, preview, and host HTML code snippets permanently. Powered by GitHub Pages, it provides an instant environment to generate shareable links for static web code without complex deployment pipelines.
+MK HTML Cloud Studio is a state-of-the-art, high-performance, browser-based cloud IDE and deployment suite designed by **MK_BOTS™**. It allows developers, creators, and hobbyists to write, preview, and host standalone HTML, CSS, and JavaScript applications instantly in the cloud with advanced VFX and seamless link management.
 
-## 🚀 Features
+## 🚀 Key Features
 
-- **Live HTML Preview:** Render your markup instantly in the browser.
-- **Permanent Link Generation:** Generate a static, shareable URL for your code.
-- **Local Storage / History:** Automatically tracks and saves your recent work locally.
-- **No Setup Required:** Zero dependencies, zero configurations—just open and build.
+- **Immersive VFX Landing Page:** Built with custom interactive particle mesh canvas animations, glassmorphism UI, and dynamic status counters.
+- **Live HTML/JS Studio & Templates:** Instant rendering engine with built-in responsive viewport controls (Desktop/Mobile) and pre-built templates (Tailwind CSS, Basic HTML, Interactive Canvas Games).
+- **Flexible Cloud Deployments:** Generate secure shareable URLs instantly. Choose between **temporary time-bound links** (in minutes) or **permanent links** protected by a master password (`L`).
+- **Live Cloud Link Editing:** Update code on existing permanent URLs securely without needing to change or generate a new link.
+- **Local Storage History:** Automatically saves and tracks recent projects locally for quick re-access.
+- **Branded Watermark Footer:** Automatically embeds the official **MK_BOTS™** branding and rights notice across all studio previews and cloud viewers.
 
-## 🛠️ How to Use
+## 🛠️ How It Works
 
-1. **Open the Studio:** Navigate to your live deployment URL.
-2. **Write or Paste Code:** Input your HTML, CSS, or JavaScript directly into the workspace.
-3. **Generate Link:** Click the **Generate Link** button to create a permanent, unique URL for your webpage.
-4. **Access History:** Review or reload past snippets using the **📁 History** panel.
+1. **Launch Studio:** Open the live web application and click **🚀 Launch Studio Workspace** from the animated landing page.
+2. **Code or Load Template:** Write your code from scratch, use the live editor, or pick a starter template from the dropdown.
+3. **Test & Inspect:** Run live previews or open the **Full Screen Preview Suite** to test mobile and desktop layout responsiveness.
+4. **Deploy & Share:** Click **🚀 Generate Link**, specify whether it's temporary or permanent (using password `L`), and copy your cloud endpoint.
 
 ## 📂 File Structure
 
 ```text
-├── index.html       # The main entry point and UI for the Cloud Studio
-├── README.md        # Project documentation
-└── [assets/js/css]  # Accompanying script and style dependencies (if applicable)
-```
-
-## ⚙️ Local Development & Deployment
-
-### Running Locally
-Since this is a fully static client-side application, you can run it locally without an application server:
-1. Clone the repository:
-   ```bash
-   git clone https://github.com
-   ```
-2. Open the exact `index.html` file (using lowercase letters) directly in any modern web browser.
-
-### Deploying to GitHub Pages
-To host your own version of this studio permanently:
-1. Push the code to your GitHub repository.
-2. Navigate to **Settings** -> **Pages**.
-3. Under **Build and deployment**, set the source to **Deploy from a branch**.
-4. Select the `main` (or `master`) branch and the `/ (root)` folder, then click **Save**.
-
-## 🔒 Security & Performance
-- All links are generated securely on the client side.
-- Hosted entirely on enterprise-grade GitHub Pages infrastructure for 99.9% uptime.
-
-## 📄 License
-This project is open-source and available under the [MIT License](LICENSE).
+├── index.html       # All-in-one frontend studio, landing page, and cloud viewer
+└── README.md        # Project documentation
