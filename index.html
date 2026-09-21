@@ -477,13 +477,31 @@ button:hover {
   border-bottom: none;
 }
 
-iframe {
-  width: 100%;
+.studio-preview-container {
+  display: flex;
+  flex-direction: column;
   height: 300px;
-  background: white;
   border: 1px solid var(--border-color);
   border-radius: 0 0 10px 10px;
+  background: white;
 }
+.studio-preview-container iframe {
+  width: 100%;
+  flex-grow: 1;
+  border: none;
+  background: white;
+}
+.studio-watermark-footer {
+  background: #0f172a;
+  color: #94a3b8;
+  text-align: center;
+  padding: 8px 10px;
+  font-size: 11.5px;
+  border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+.studio-watermark-footer a { color: #38bdf8; text-decoration: none; font-weight: 600; }
+.studio-watermark-footer a:hover { text-decoration: underline; }
 
 /* Sidebar History */
 .sidebar-panel {
@@ -800,7 +818,12 @@ input[type="text"] {
             <span>Live Render Output</span>
             <span style="font-size:11px; color:var(--accent-cyan);">⚡ Optimized Engine</span>
           </div>
-          <iframe id="previewFrame"></iframe>
+          <div class="studio-preview-container">
+            <iframe id="previewFrame"></iframe>
+            <div class="studio-watermark-footer">
+              <a href="https://t.me/mk_bots0" target="_blank">ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍᴋ_ʙᴏᴛs™ | ᴀʟʟ ʀɪɢʜᴛs ʀᴇsᴇʀᴠᴇᴅ ♡</a>
+            </div>
+          </div>
         </div>
 
         <div id="linkBox"></div>
