@@ -4,6 +4,38 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MK HTML Cloud Studio | Professional Cloud Workspace</title>
+
+<!-- CodeMirror 5 Core & Addons for Real HTML IDE Experience -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-ocean.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/lint/lint.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/dialog/dialog.min.css">
+
+<!-- HTMLHint + LZString (Compression for Massive Multi-Thousand Line Projects) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/htmlhint/1.1.4/htmlhint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
+
+<!-- CodeMirror Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchtags.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/xml-fold.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/xml-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/html-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/lint/lint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/lint/html-lint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/search/search.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/search/searchcursor.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/dialog/dialog.min.js"></script>
+
 <style>
 :root {
   --bg-dark: #030712;
@@ -343,7 +375,7 @@ body {
 
 /* App Studio Workspace Styles */
 .app-container {
-  max-width: 1100px;
+  max-width: 1150px;
   margin: auto;
   padding: 25px 20px;
   display: none;
@@ -387,12 +419,15 @@ body {
   border-radius: 16px;
   padding: 18px;
   box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7);
+  min-width: 0;
 }
 
 .editor-toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-bottom: 10px;
   font-size: 12px;
   color: var(--text-muted);
@@ -408,24 +443,170 @@ body {
   outline: none;
 }
 
-textarea {
-  width: 100%;
-  height: 320px;
-  background: rgba(2, 6, 23, 0.9);
-  color: #4ade80;
-  font-family: 'Fira Code', 'Courier New', monospace;
-  font-size: 13px;
-  line-height: 1.5;
-  padding: 14px;
+/* CodeMirror Custom IDE Styling & Red Error Highlighting */
+.CodeMirror {
+  height: 360px;
+  background: rgba(2, 6, 23, 0.95) !important;
+  color: #f8fafc !important;
+  font-family: 'Fira Code', 'Consolas', 'Courier New', monospace;
+  font-size: 13.5px;
+  line-height: 1.55;
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  box-sizing: border-box;
-  resize: vertical;
-  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-textarea:focus {
+.CodeMirror-focused {
   border-color: var(--accent-cyan);
-  box-shadow: 0 0 20px rgba(56, 189, 248, 0.25);
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+}
+.CodeMirror-gutters {
+  background: #060d1f !important;
+  border-right: 1px solid rgba(56, 189, 248, 0.2) !important;
+}
+.CodeMirror-ActiveLine-background {
+  background: rgba(56, 189, 248, 0.07) !important;
+}
+
+/* Red Line Error Highlighting in Editor */
+.cm-error-line-bg {
+  background: rgba(239, 68, 68, 0.18) !important;
+  border-bottom: 1.5px wavy #ef4444 !important;
+}
+.CodeMirror-lint-mark-error {
+  background-image: none !important;
+  border-bottom: 2px wavy #ef4444 !important;
+  background-color: rgba(239, 68, 68, 0.16);
+}
+.CodeMirror-lint-tooltip {
+  background: #0f172a !important;
+  border: 1px solid #ef4444 !important;
+  color: #f8fafc !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+  font-family: 'Segoe UI', sans-serif !important;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.8) !important;
+  z-index: 20000 !important;
+}
+
+/* Autocomplete Dropdown Menu Styling */
+.CodeMirror-hints {
+  background: #0f172a !important;
+  border: 1px solid var(--accent-cyan) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.85) !important;
+  padding: 4px !important;
+  z-index: 20000 !important;
+  font-family: 'Fira Code', monospace !important;
+  font-size: 12.5px !important;
+}
+.CodeMirror-hint {
+  color: #cbd5e1 !important;
+  padding: 5px 10px !important;
+  border-radius: 5px !important;
+}
+li.CodeMirror-hint-active {
+  background: linear-gradient(90deg, var(--accent-blue), #1d4ed8) !important;
+  color: #ffffff !important;
+}
+
+/* Live Error Diagnostic Bar */
+.error-status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  margin-top: 6px;
+  border-radius: 8px;
+  font-size: 12px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+}
+.error-status-bar.has-errors {
+  background: rgba(127, 29, 29, 0.35);
+  border-color: #ef4444;
+  color: #fca5a5;
+}
+.error-status-bar.clean {
+  color: #4ade80;
+}
+
+/* Full Screen Code Editor Mode */
+.editor-box.fullscreen-code-mode {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9500;
+  border-radius: 0;
+  padding: 14px 20px;
+  background: #030712;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.editor-box.fullscreen-code-mode .CodeMirror {
+  flex-grow: 1;
+  height: auto !important;
+}
+.editor-box.fullscreen-code-mode .preview-wrapper,
+.editor-box.fullscreen-code-mode #linkBox {
+  display: none;
+}
+.editor-box.fullscreen-code-mode.split-live .ide-workspace-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  flex-grow: 1;
+  min-height: 0;
+}
+.ide-workspace-split {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-height: 0;
+}
+.fs-live-pane {
+  display: none;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  overflow: hidden;
+  background: white;
+}
+.editor-box.fullscreen-code-mode.split-live .fs-live-pane {
+  display: flex;
+}
+
+/* Top Developer Tools Bar inside Full Screen Code Editor */
+.fs-editor-top-tools {
+  display: none;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 8px 14px;
+  margin-bottom: 10px;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.editor-box.fullscreen-code-mode .fs-editor-top-tools {
+  display: flex;
+}
+.tool-chip {
+  background: #1e293b;
+  color: #e2e8f0;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 5px 10px;
+  font-size: 11.5px;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: none;
+}
+.tool-chip:hover {
+  background: var(--accent-blue);
+  border-color: var(--accent-cyan);
 }
 
 .btn-group {
@@ -457,6 +638,7 @@ button:hover {
 
 .btn-green { background: linear-gradient(135deg, #16a34a, #15803d) !important; }
 .btn-purple { background: linear-gradient(135deg, #7c3aed, #6d28d9) !important; }
+.btn-cyan { background: linear-gradient(135deg, #0284c7, #0369a1) !important; }
 .btn-secondary { background: linear-gradient(135deg, #475569, #334155) !important; box-shadow: none !important; }
 
 .preview-wrapper {
@@ -512,7 +694,7 @@ button:hover {
   padding: 18px;
   display: flex;
   flex-direction: column;
-  max-height: 560px;
+  max-height: 620px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
@@ -628,7 +810,7 @@ input[type="text"] {
   border-radius: 8px;
   border: 1px solid var(--accent-cyan);
   box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-  z-index: 10000;
+  z-index: 30000;
   display: none;
   font-size: 13.5px;
 }
@@ -676,23 +858,23 @@ input[type="text"] {
         <div class="stat-label">Cloud Uptime</div>
       </div>
       <div class="stat-card">
-        <div class="stat-number">&lt; 50ms</div>
+        <div class="stat-number">less than 50ms</div>
         <div class="stat-label">Render Latency</div>
       </div>
       <div class="stat-card">
-        <div class="stat-number">Secure</div>
-        <div class="stat-label">Encrypted JSONBins</div>
+        <div class="stat-number">Unlimited</div>
+        <div class="stat-label">Compressed Multi-Bin Scale</div>
       </div>
     </div>
 
     <div class="features-grid">
       <div class="feature-card">
-        <h3>⚡ High-Performance Preview</h3>
-        <p>Instant rendering engine with responsive viewport support and live debugging compatibility.</p>
+        <h3>⚡ High-Performance IDE & Preview</h3>
+        <p>Smart HTML tag autocomplete, red-line live syntax error detection, full-screen coding mode, and responsive viewports.</p>
       </div>
       <div class="feature-card">
-        <h3>🔗 Permanent & Secure Links</h3>
-        <p>Deploy secure cloud endpoints instantly. Create permanent password-protected apps or temporary test links.</p>
+        <h3>🔗 Massive Project Cloud Links</h3>
+        <p>Powered by LZ-Compression and Multi-Bin Chunking to deploy thousands of lines of code effortlessly.</p>
       </div>
       <div class="feature-card">
         <h3>✏️ Live Cloud Link Editing</h3>
@@ -707,17 +889,17 @@ input[type="text"] {
         <div class="step-box">
           <div class="step-num">01</div>
           <div class="step-title">Write or Load Code</div>
-          <div class="step-desc">Type your HTML/CSS/JS code directly in the studio or pick a built-in starter template.</div>
+          <div class="step-desc">Type HTML/CSS/JS with real-time tag suggestions and live red-line syntax error checking.</div>
         </div>
         <div class="step-box">
           <div class="step-num">02</div>
           <div class="step-title">Test Live Preview</div>
-          <div class="step-desc">Inspect your application in real-time with full mobile and desktop responsive viewport toggles.</div>
+          <div class="step-desc">Inspect your application in real-time with full mobile, desktop, and split-screen modes.</div>
         </div>
         <div class="step-box">
           <div class="step-num">03</div>
           <div class="step-title">Deploy to Cloud</div>
-          <div class="step-desc">Generate a permanent or temporary shareable link secured by your master password.</div>
+          <div class="step-desc">Generate a permanent or temporary shareable link—even for massive multi-thousand-line projects.</div>
         </div>
       </div>
     </div>
@@ -785,29 +967,69 @@ input[type="text"] {
 
     <div class="workspace-grid">
       <!-- Main Editor Column -->
-      <div class="editor-box">
+      <div id="editorBox" class="editor-box">
+
+        <!-- TOP PRO BAR (Visible in Full Screen Code Editor Mode) -->
+        <div class="fs-editor-top-tools">
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <strong style="color:var(--accent-cyan); font-size:14px; margin-right:6px;">⚡ MK Full-Screen IDE</strong>
+            <button class="tool-chip" onclick="insertSnippet('div')">+ &lt;div&gt;</button>
+            <button class="tool-chip" onclick="insertSnippet('style')">+ &lt;style&gt;</button>
+            <button class="tool-chip" onclick="insertSnippet('script')">+ &lt;script&gt;</button>
+            <button class="tool-chip" onclick="insertSnippet('flex')">+ Flex Box</button>
+            <button class="tool-chip" onclick="formatCode()">✨ Format Code</button>
+            <button class="tool-chip" onclick="triggerAutocomplete()">💡 Suggest (Ctrl+Space)</button>
+            <button class="tool-chip" onclick="cmEditor.execCommand('find')">🔍 Find</button>
+            <button class="tool-chip" onclick="changeFontSize(1)">A+</button>
+            <button class="tool-chip" onclick="changeFontSize(-1)">A-</button>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <button class="tool-chip" id="splitToggleBtn" onclick="toggleSplitLive()">🌓 Split Live Preview</button>
+            <button class="btn-green" style="padding:5px 12px; font-size:11.5px;" onclick="preview()">▶ Run</button>
+            <button style="padding:5px 12px; font-size:11.5px;" onclick="generate()">🚀 Deploy Link</button>
+            <button class="btn-secondary" style="background:#dc2626 !important; padding:5px 12px; font-size:11.5px;" onclick="toggleFullscreenEditor()">✕ Exit Full Screen</button>
+          </div>
+        </div>
+
         <div class="editor-toolbar">
-          <span>HTML / JS Code Workspace</span>
-          <div>
+          <span>HTML / CSS / JS Intelligent IDE <small style="color:var(--accent-cyan);">(Type &lt; for tag suggestions)</small></span>
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
             <select class="template-dropdown" onchange="loadTemplate(this)">
               <option value="">✨ Load Template...</option>
               <option value="basic">Basic HTML5 Shell</option>
               <option value="tailwind">Tailwind CSS Starter</option>
               <option value="game">Interactive Canvas Game</option>
             </select>
-            <button class="btn-secondary" style="padding: 4px 8px; margin-left: 4px;" onclick="clearEditor()">Clear</button>
+            <button class="btn-cyan" style="padding: 5px 10px;" onclick="formatCode()">✨ Format</button>
+            <button class="btn-purple" style="padding: 5px 10px;" onclick="toggleFullscreenEditor()" id="fsEditorBtn">⛶ Full Screen Editor</button>
+            <button class="btn-secondary" style="padding: 5px 10px;" onclick="clearEditor()">Clear</button>
           </div>
         </div>
 
-        <textarea id="code" placeholder="Write or paste your stunning code here..." oninput="updateStats()"></textarea>
-        <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted); margin-top:4px;">
-          <span id="charCount">Characters: 0</span>
-          <span id="lineCount">Lines: 0</span>
+        <!-- IDE Split Container (Code Editor + Optional Split Preview in Fullscreen) -->
+        <div class="ide-workspace-split">
+          <textarea id="code" placeholder="Write or paste your stunning code here..."></textarea>
+          <div class="fs-live-pane">
+            <div style="background:#0f172a; color:#38bdf8; padding:6px 12px; font-size:12px; font-weight:600; border-bottom:1px solid var(--border-color);">
+              ⚡ Live Split-Screen Output
+            </div>
+            <iframe id="fsSplitFrame" style="width:100%; flex-grow:1; border:none; background:white;"></iframe>
+          </div>
+        </div>
+
+        <!-- Live Syntax Error Bar & Line Stats -->
+        <div id="errorStatusBar" class="error-status-bar clean">
+          <span id="lintStatusText">✅ Syntax Check: No HTML errors detected</span>
+          <div style="display:flex; gap:14px; color:var(--text-muted);">
+            <span id="charCount">Characters: 0</span>
+            <span id="lineCount">Lines: 0</span>
+          </div>
         </div>
 
         <div class="btn-group">
           <button onclick="preview()">▶ Run Preview</button>
-          <button class="btn-purple" onclick="openFullscreenPreview()">🔍 Full Screen</button>
+          <button class="btn-purple" onclick="openFullscreenPreview()">🔍 Full Screen Preview</button>
+          <button class="btn-cyan" onclick="toggleFullscreenEditor()">⛶ Full Screen Editor</button>
           <button onclick="saveLocal()">💾 Save Local</button>
           <button onclick="generate()">🚀 Generate Link</button>
           <button class="btn-green" onclick="updateExistingLink()">✏️ Edit Link</button>
@@ -861,6 +1083,216 @@ input[type="text"] {
 // 🔴 API KEY
 const API_KEY = "$2a$10$8yhV85AJmo2nIR.wx9d2F.I6dTxt5NnpIKdZs9qqKWzB6ZAI9NUhG";
 
+// SAFE PAYLOAD CHUNK SIZE FOR JSONBIN (~70KB per chunk so even 10,000+ line apps work seamlessly)
+const CHUNK_LIMIT = 70000;
+
+let cmEditor = null;
+let currentFontSize = 13.5;
+let errorLineWidgets = [];
+
+// INITIALIZE CODEMIRROR REAL HTML IDE
+function initCodeEditor() {
+  if (cmEditor) return;
+  const textarea = document.getElementById("code");
+
+  cmEditor = CodeMirror.fromTextArea(textarea, {
+    mode: "htmlmixed",
+    theme: "material-ocean",
+    lineNumbers: true,
+    lineWrapping: true,
+    autoCloseTags: true,
+    autoCloseBrackets: true,
+    matchTags: { bothTags: true },
+    styleActiveLine: true,
+    gutters: ["CodeMirror-lint-markers", "CodeMirror-linenumbers"],
+    lint: {
+      getAnnotations: customHtmlLinter,
+      async: false
+    },
+    extraKeys: {
+      "Ctrl-Space": "autocomplete",
+      "Cmd-Space": "autocomplete",
+      "F11": function() { toggleFullscreenEditor(); },
+      "Esc": function() {
+        if (document.getElementById("editorBox").classList.contains("fullscreen-code-mode")) {
+          toggleFullscreenEditor();
+        }
+      }
+    }
+  });
+
+  // Trigger tag & attribute autocomplete automatically as user types
+  cmEditor.on("inputRead", function(cm, change) {
+    if (change.origin !== "+input") return;
+    const ch = change.text[0];
+    const cur = cm.getCursor();
+    const token = cm.getTokenAt(cur);
+
+    if (
+      ch === "<" ||
+      ch === " " && token.type === "tag" ||
+      (/^[a-zA-Z]$/.test(ch) && (token.type === "tag" || token.type === "attribute" || token.string.startsWith("<")))
+    ) {
+      CodeMirror.commands.autocomplete(cm, null, { completeSingle: false });
+    }
+  });
+
+  cmEditor.on("change", function() {
+    updateStats();
+    if (document.getElementById("editorBox").classList.contains("split-live")) {
+      document.getElementById("fsSplitFrame").srcdoc = injectViewport(cmEditor.getValue());
+    }
+  });
+}
+
+// CUSTOM HTML LINTER + RED ERROR LINE HIGHLIGHTER
+function customHtmlLinter(text) {
+  if (!window.HTMLHint || !text.trim()) {
+    updateErrorUI([]);
+    return [];
+  }
+
+  const rules = {
+    "tagname-lowercase": false,
+    "attr-lowercase": false,
+    "attr-value-double-quotes": false,
+    "doctype-first": false,
+    "tag-pair": true,
+    "spec-char-escape": false,
+    "id-unique": true,
+    "src-not-empty": true,
+    "attr-no-duplication": true,
+    "title-require": false
+  };
+
+  const messages = HTMLHint.verify(text, rules);
+  const annotations = messages.map(msg => ({
+    from: CodeMirror.Pos(msg.line - 1, msg.col - 1),
+    to: CodeMirror.Pos(msg.line - 1, msg.col + 5),
+    message: msg.message,
+    severity: msg.type === "error" ? "error" : "warning",
+    line: msg.line - 1
+  }));
+
+  updateErrorUI(annotations);
+  return annotations;
+}
+
+function updateErrorUI(annotations) {
+  if (!cmEditor) return;
+
+  // Clear previous red line highlights
+  errorLineWidgets.forEach(lineHandle => {
+    cmEditor.removeLineClass(lineHandle, "background", "cm-error-line-bg");
+  });
+  errorLineWidgets = [];
+
+  const bar = document.getElementById("errorStatusBar");
+  const statusText = document.getElementById("lintStatusText");
+
+  const errors = annotations.filter(a => a.severity === "error");
+
+  if (errors.length > 0) {
+    errors.forEach(err => {
+      const handle = cmEditor.addLineClass(err.line, "background", "cm-error-line-bg");
+      if (handle) errorLineWidgets.push(handle);
+    });
+    bar.classList.remove("clean");
+    bar.classList.add("has-errors");
+    statusText.innerText = `❌ Line ${errors[0].line + 1}: ${errors[0].message} (${errors.length} issue${errors.length > 1 ? 's' : ''})`;
+  } else {
+    bar.classList.remove("has-errors");
+    bar.classList.add("clean");
+    statusText.innerText = "✅ Syntax Check: No HTML errors detected";
+  }
+}
+
+// HELPER FUNCTIONS TO GET/SET EDITOR CODE SEAMLESSLY
+function getEditorCode() {
+  return cmEditor ? cmEditor.getValue() : document.getElementById("code").value;
+}
+
+function setEditorCode(val) {
+  if (cmEditor) {
+    cmEditor.setValue(val);
+    setTimeout(() => cmEditor.refresh(), 20);
+  } else {
+    document.getElementById("code").value = val;
+  }
+}
+
+// FULLSCREEN CODE EDITOR MODE & TOP PRO TOOLBAR ACTIONS
+function toggleFullscreenEditor() {
+  const box = document.getElementById("editorBox");
+  box.classList.toggle("fullscreen-code-mode");
+  const isFS = box.classList.contains("fullscreen-code-mode");
+  document.getElementById("fsEditorBtn").innerText = isFS ? "✕ Exit Full Screen" : "⛶ Full Screen Editor";
+  if (cmEditor) {
+    setTimeout(() => {
+      cmEditor.refresh();
+      cmEditor.focus();
+    }, 50);
+  }
+}
+
+function toggleSplitLive() {
+  const box = document.getElementById("editorBox");
+  box.classList.toggle("split-live");
+  if (box.classList.contains("split-live")) {
+    document.getElementById("fsSplitFrame").srcdoc = injectViewport(getEditorCode());
+  }
+  if (cmEditor) setTimeout(() => cmEditor.refresh(), 50);
+}
+
+function triggerAutocomplete() {
+  if (cmEditor) {
+    cmEditor.focus();
+    CodeMirror.commands.autocomplete(cmEditor, null, { completeSingle: false });
+  }
+}
+
+function changeFontSize(delta) {
+  currentFontSize = Math.min(22, Math.max(10, currentFontSize + delta));
+  document.querySelector(".CodeMirror").style.fontSize = currentFontSize + "px";
+  if (cmEditor) cmEditor.refresh();
+}
+
+function insertSnippet(type) {
+  if (!cmEditor) return;
+  const snippets = {
+    div: `<div class="container">\n  \n</div>`,
+    style: `<style>\n  \n</style>`,
+    script: `<script>\n  \n<\/script>`,
+    flex: `<div style="display:flex; justify-content:center; align-items:center; gap:12px;">\n  <div>Item 1</div>\n  <div>Item 2</div>\n</div>`
+  };
+  cmEditor.replaceSelection(snippets[type] || "");
+  cmEditor.focus();
+}
+
+function formatCode() {
+  let code = getEditorCode();
+  if (!code.trim()) return;
+  let formatted = "";
+  let pad = 0;
+  const lines = code.replace(/>\s*</g, ">\n<").split("\n");
+  lines.forEach(line => {
+    let indent = 0;
+    let trimmed = line.trim();
+    if (!trimmed) return;
+    if (trimmed.match(/^<\/\w/)) {
+      if (pad > 0) pad -= 1;
+    } else if (trimmed.match(/^<\w[^>]*[^\/]>.*$/)) {
+      if (!trimmed.match(/<\/\w[^>]*>$/) && !trimmed.match(/^<(meta|img|br|hr|input|link)/i)) {
+        indent = 1;
+      }
+    }
+    formatted += "  ".repeat(pad) + trimmed + "\n";
+    pad += indent;
+  });
+  setEditorCode(formatted.trim());
+  showToast("✨ Code formatted cleanly!");
+}
+
 // ACCORDION TOGGLE
 function toggleAccordion(el) {
   el.classList.toggle("active");
@@ -912,7 +1344,6 @@ function animateVFX() {
     if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
     if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
 
-    // Mouse Interaction Physics
     if(mouse.x !== null && mouse.y !== null) {
       let dist = Math.hypot(p.x - mouse.x, p.y - mouse.y);
       if(dist < mouse.radius) {
@@ -947,20 +1378,28 @@ function showToast(msg) {
   let t = document.getElementById("toast");
   t.innerText = msg;
   t.style.display = "block";
-  setTimeout(() => { t.style.display = "none"; }, 3000);
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => { t.style.display = "none"; }, 3200);
 }
 
 // VIEW NAVIGATION
 function openStudio(){
   document.getElementById("landingView").style.display = "none";
   document.getElementById("appView").style.display = "block";
+  initCodeEditor();
   loadHistory();
-  if(!document.getElementById("code").value) {
+  if(!getEditorCode()) {
     loadTemplate({value: "basic"});
+  } else {
+    setTimeout(() => cmEditor.refresh(), 30);
   }
 }
 
 function returnToLanding(){
+  const box = document.getElementById("editorBox");
+  if (box.classList.contains("fullscreen-code-mode")) {
+    toggleFullscreenEditor();
+  }
   document.getElementById("appView").style.display = "none";
   document.getElementById("landingView").style.display = "block";
 }
@@ -975,7 +1414,7 @@ const templates = {
 function loadTemplate(select) {
   let val = select.value;
   if(templates[val]) {
-    document.getElementById("code").value = templates[val];
+    setEditorCode(templates[val]);
     preview();
     updateStats();
     showToast("✨ Template loaded successfully!");
@@ -985,16 +1424,16 @@ function loadTemplate(select) {
 
 function clearEditor() {
   if(confirm("Clear editor code?")) {
-    document.getElementById("code").value = "";
+    setEditorCode("");
     preview();
     updateStats();
   }
 }
 
 function updateStats() {
-  let val = document.getElementById("code").value;
-  document.getElementById("charCount").innerText = "Characters: " + val.length;
-  document.getElementById("lineCount").innerText = "Lines: " + val.split("\n").length;
+  let val = getEditorCode();
+  document.getElementById("charCount").innerText = "Characters: " + val.length.toLocaleString();
+  document.getElementById("lineCount").innerText = "Lines: " + val.split("\n").length.toLocaleString();
 }
 
 // VIEWPORT INJECTION
@@ -1013,13 +1452,17 @@ function injectViewport(html) {
 
 // PREVIEW
 function preview(){
-  let code = document.getElementById("code").value;
+  let code = getEditorCode();
   document.getElementById("previewFrame").srcdoc = injectViewport(code);
+  if (document.getElementById("editorBox").classList.contains("split-live")) {
+    document.getElementById("fsSplitFrame").srcdoc = injectViewport(code);
+  }
+  showToast("⚡ Preview updated!");
 }
 
-// FULL SCREEN MODAL
+// FULL SCREEN PREVIEW MODAL
 function openFullscreenPreview(){
-  let code = document.getElementById("code").value;
+  let code = getEditorCode();
   if(!code) { showToast("⚠️ Editor is empty!"); return; }
   document.getElementById("fullscreenFrame").srcdoc = injectViewport(code);
   document.getElementById("fullscreenOverlay").style.display = "flex";
@@ -1046,7 +1489,7 @@ function saveLocal(){
   let name = prompt("Enter local file name:");
   if(!name) return;
   let files = JSON.parse(localStorage.getItem("mk_files") || "{}");
-  files[name] = document.getElementById("code").value;
+  files[name] = getEditorCode();
   localStorage.setItem("mk_files", JSON.stringify(files));
   loadHistory();
   showToast("💾 File saved locally!");
@@ -1068,7 +1511,7 @@ function loadHistory(){
     div.className = "card";
     div.innerHTML = `📄 <b>${name}</b> <span style="color:var(--accent-cyan); font-size:11px;">Load →</span>`;
     div.onclick = function(){
-      document.getElementById("code").value = files[name];
+      setEditorCode(files[name]);
       preview();
       updateStats();
       showToast(`📂 Loaded '${name}'`);
@@ -1077,9 +1520,51 @@ function loadHistory(){
   }
 }
 
+// CLOUD PAYLOAD BUILDER (HANDLES MASSIVE MULTI-THOUSAND LINE PROJECTS VIA LZ-COMPRESSION + MULTI-BIN CHUNKING)
+async function createCloudPayload(html, expireTime) {
+  const compressed = LZString.compressToUTF16 ? LZString.compressToEncodedURIComponent(html) : html;
+
+  // Single Bin Path (Compressed fits inside a single JSONBin)
+  if (compressed.length <= CHUNK_LIMIT) {
+    return {
+      compressed: true,
+      data: compressed,
+      expire: expireTime,
+      protected: expireTime === null
+    };
+  }
+
+  // Multi-Bin Chunking Path for Huge Projects (Thousands & Thousands of Lines)
+  const chunks = [];
+  for (let i = 0; i < compressed.length; i += CHUNK_LIMIT) {
+    chunks.push(compressed.slice(i, i + CHUNK_LIMIT));
+  }
+
+  const chunkBinIds = [];
+  for (let idx = 0; idx < chunks.length; idx++) {
+    showToast(`⏳ Uploading large project part ${idx + 1} of ${chunks.length}...`);
+    let cRes = await fetch("https://api.jsonbin.io/v3/b", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
+      body: JSON.stringify({ chunkPart: idx, data: chunks[idx] })
+    });
+    if (!cRes.ok) throw new Error("Chunk upload failed");
+    let cJson = await cRes.json();
+    chunkBinIds.push(cJson.metadata.id);
+  }
+
+  return {
+    compressed: true,
+    chunked: true,
+    chunks: chunkBinIds,
+    expire: expireTime,
+    protected: expireTime === null
+  };
+}
+
 // GENERATE CLOUD LINK
 async function generate(){
-  let html = document.getElementById("code").value;
+  let html = getEditorCode();
   if(!html){ showToast("⚠️ Code cannot be empty!"); return; }
 
   let inputTime = prompt("Enter expire time in minutes, or type 'permanent':");
@@ -1102,15 +1587,24 @@ async function generate(){
     expireTime = Date.now() + (minutes * 60000);
   }
 
-  showToast("⏳ Generating cloud link...");
+  showToast("⏳ Compressing & generating cloud link...");
   try{
+    const payload = await createCloudPayload(html, expireTime);
+
     let res = await fetch("https://api.jsonbin.io/v3/b", {
       method:"POST",
       headers:{ "Content-Type":"application/json", "X-Master-Key":API_KEY },
-      body: JSON.stringify({ html: html, expire: expireTime, protected: expireTime === null })
+      body: JSON.stringify(payload)
     });
+    if (!res.ok) throw new Error("Failed to create master bin");
     let json = await res.json();
     let link = location.origin + location.pathname + "?id=" + json.metadata.id;
+
+    // Exit full screen editor if open so user sees their generated link immediately
+    const box = document.getElementById("editorBox");
+    if (box.classList.contains("fullscreen-code-mode")) {
+      toggleFullscreenEditor();
+    }
 
     document.getElementById("linkBox").innerHTML = `
       <p style="margin-top:12px; color:var(--accent-cyan); font-size:13.5px; font-weight:bold;">🔗 Generated Link (${expireTime === null ? 'Permanent' : 'Temporary'}):</p>
@@ -1118,11 +1612,11 @@ async function generate(){
     `;
     showToast("✅ Cloud link generated successfully!");
   }catch(e){
-    showToast("❌ Error generating link.");
+    showToast("❌ Error generating link. Check network or API key.");
   }
 }
 
-// EDIT EXISTING LINK
+// EDIT EXISTING LINK (SUPPORTS MASSIVE PROJECTS TOO)
 async function updateExistingLink(){
   let linkInput = prompt("Enter your full link or Bin ID to edit:");
   if(!linkInput) return;
@@ -1145,22 +1639,23 @@ async function updateExistingLink(){
   let pass = prompt("Enter owner password (L) to update link:");
   if(pass !== "L"){ showToast("❌ Incorrect password!"); return; }
 
-  let html = document.getElementById("code").value;
+  let html = getEditorCode();
   if(!html){ showToast("⚠️ Code is empty!"); return; }
 
-  showToast("⏳ Updating cloud link...");
+  showToast("⏳ Compressing & updating cloud link...");
   try{
+    const payload = await createCloudPayload(html, null);
     let res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
       method:"PUT",
       headers:{ "Content-Type":"application/json", "X-Master-Key":API_KEY },
-      body: JSON.stringify({ html: html, expire: null, protected: true })
+      body: JSON.stringify(payload)
     });
     if(res.ok){ showToast("✅ Link successfully updated!"); }
     else { showToast("❌ Failed to update link."); }
   }catch(e){ showToast("❌ Error updating link."); }
 }
 
-// VIEWER MODE WITH WATERMARK FOOTER
+// VIEWER MODE WITH WATERMARK FOOTER (SUPPORTS LEGACY, COMPRESSED & MULTI-CHUNK PROJECTS)
 async function loadViewer(){
   let params = new URLSearchParams(location.search);
   let id = params.get("id");
@@ -1181,6 +1676,27 @@ async function loadViewer(){
       document.body.innerHTML="<h2 style='text-align:center;margin-top:25vh; color:#f59e0b;'>⛔ This link has expired.</h2>";
       return;
     }
+
+    let finalHtml = "";
+
+    // Reassemble if Multi-Bin Chunked Project
+    if (data.chunked && Array.isArray(data.chunks)) {
+      const chunkResults = await Promise.all(
+        data.chunks.map(chunkId =>
+          fetch(`https://api.jsonbin.io/v3/b/${chunkId}/latest`, { headers: { "X-Master-Key": API_KEY } })
+            .then(r => r.json())
+        )
+      );
+      const combinedCompressed = chunkResults.map(c => c.record.data).join("");
+      finalHtml = LZString.decompressFromEncodedURIComponent(combinedCompressed);
+    } else if (data.compressed && data.data) {
+      // Single Compressed Bin
+      finalHtml = LZString.decompressFromEncodedURIComponent(data.data);
+    } else {
+      // Backward compatible with all previously generated links
+      finalHtml = data.html || "";
+    }
+
     document.body.innerHTML = `
       <div class="viewer-container">
         <div class="iframe-wrap"><iframe id="cloudFrame"></iframe></div>
@@ -1189,7 +1705,7 @@ async function loadViewer(){
         </div>
       </div>
     `;
-    document.getElementById("cloudFrame").srcdoc = injectViewport(data.html);
+    document.getElementById("cloudFrame").srcdoc = injectViewport(finalHtml);
   }catch(e){
     document.body.innerHTML="<h2 style='text-align:center;margin-top:25vh; color:#ef4444;'>⚠️ Error Loading Page</h2>";
   }
