@@ -405,7 +405,7 @@ body {
 
 .workspace-grid {
   display: grid;
-  grid-template-columns: 1fr 300px;
+  grid-template-columns: 1fr 320px;
   gap: 20px;
 }
 @media(max-width: 900px) {
@@ -530,28 +530,41 @@ li.CodeMirror-hint-active {
   color: #4ade80;
 }
 
-/* Full Screen Code Editor Mode */
-.editor-box.fullscreen-code-mode {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 9500;
-  border-radius: 0;
-  padding: 14px 20px;
-  background: #030712;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+/* True Full Screen Code Editor Mode */
+body.fs-editor-active {
+  overflow: hidden !important;
+}
+.editor-box.fullscreen-code-mode,
+.editor-box:fullscreen,
+.editor-box:-webkit-full-screen {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  z-index: 25000 !important;
+  border-radius: 0 !important;
+  border: none !important;
+  margin: 0 !important;
+  padding: 12px 16px !important;
+  background: #030712 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
 }
 .editor-box.fullscreen-code-mode .CodeMirror {
-  flex-grow: 1;
-  height: auto !important;
+  flex-grow: 1 !important;
+  height: 100% !important;
 }
 .editor-box.fullscreen-code-mode .preview-wrapper,
-.editor-box.fullscreen-code-mode #linkBox {
-  display: none;
+.editor-box.fullscreen-code-mode #linkBox,
+.editor-box.fullscreen-code-mode .btn-group,
+.editor-box.fullscreen-code-mode .editor-toolbar {
+  display: none !important;
 }
 .editor-box.fullscreen-code-mode.split-live .ide-workspace-split {
   display: grid;
@@ -559,6 +572,12 @@ li.CodeMirror-hint-active {
   gap: 14px;
   flex-grow: 1;
   min-height: 0;
+}
+@media(max-width: 768px) {
+  .editor-box.fullscreen-code-mode.split-live .ide-workspace-split {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
 }
 .ide-workspace-split {
   display: flex;
@@ -694,19 +713,25 @@ button:hover {
   padding: 18px;
   display: flex;
   flex-direction: column;
-  max-height: 620px;
+  max-height: 780px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  gap: 14px;
 }
 
 .sidebar-panel h3 {
-  font-size: 15px;
-  margin-bottom: 12px;
+  font-size: 14.5px;
+  margin-bottom: 8px;
   color: #cbd5e1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .history-list {
   overflow-y: auto;
-  flex-grow: 1;
+  flex: 1;
+  min-height: 140px;
+  max-height: 310px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -730,6 +755,42 @@ button:hover {
 .card:hover {
   background: rgba(30, 41, 59, 0.9);
   border-color: var(--accent-cyan);
+}
+
+.link-history-card {
+  background: rgba(2, 6, 23, 0.75);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  padding: 10px 12px;
+  border-radius: 10px;
+  transition: all 0.2s;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.link-history-card:hover {
+  border-color: var(--accent-cyan);
+  background: rgba(15, 23, 42, 0.9);
+}
+.link-card-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+.mini-action-btn {
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 5px;
+  background: #1e293b;
+  color: #e2e8f0;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  cursor: pointer;
+  box-shadow: none;
+}
+.mini-action-btn:hover {
+  background: var(--accent-blue);
+  color: white;
 }
 
 input[type="text"] {
@@ -878,7 +939,7 @@ input[type="text"] {
       </div>
       <div class="feature-card">
         <h3>✏️ Live Cloud Link Editing</h3>
-        <p>Never lose your updates. Securely verify your credentials and push real-time code updates to existing URLs.</p>
+        <p>Never lose your updates. Securely verify your creator ownership and push real-time code updates to existing URLs.</p>
       </div>
     </div>
 
@@ -914,7 +975,7 @@ input[type="text"] {
           <span>▼</span>
         </div>
         <div class="accordion-answer">
-          Type 'permanent' or 'p' when generating a link, enter your password (<strong>L</strong>), and the platform will generate a permanent cloud URL carrying your branded watermark footer.
+          Type 'permanent' or 'p' when generating a link, enter your password (<strong>L</strong>), optionally give your link a custom name, and the platform will generate a permanent cloud URL carrying your branded watermark footer.
         </div>
       </div>
 
@@ -924,17 +985,17 @@ input[type="text"] {
           <span>▼</span>
         </div>
         <div class="accordion-answer">
-          Yes! Click the 'Edit Link' button in the studio, enter your link or Bin ID along with your password (<strong>L</strong>), and your code will instantly update without changing the URL.
+          Yes! Click the 'Edit Link' button in the studio, enter your link or Bin ID along with your password (<strong>L</strong>). Only the original creator device that generated the link has permission to edit it.
         </div>
       </div>
 
       <div class="accordion-item" onclick="toggleAccordion(this)">
         <div class="accordion-question">
-          <span>Are my local files safe?</span>
+          <span>Are my local files and created links safe?</span>
           <span>▼</span>
         </div>
         <div class="accordion-answer">
-          All local projects are securely saved inside your browser's local storage history so you can retrieve and load them anytime.
+          All local projects and every cloud link you create (along with its source code) are automatically saved inside your browser's local storage history so you can view, copy, or reload their code anytime.
         </div>
       </div>
     </div>
@@ -1051,10 +1112,20 @@ input[type="text"] {
         <div id="linkBox"></div>
       </div>
 
-      <!-- Sidebar History Panel -->
+      <!-- Sidebar History Panel (Local Files + Created Links History) -->
       <div class="sidebar-panel">
-        <h3>📁 Local History</h3>
-        <div id="historyList" class="history-list"></div>
+        <div>
+          <h3>📁 Saved Local Files</h3>
+          <div id="historyList" class="history-list"></div>
+        </div>
+
+        <div style="border-top: 1px solid rgba(56, 189, 248, 0.2); padding-top: 12px;">
+          <h3>
+            <span>🔗 Created Links History</span>
+            <button class="mini-action-btn" onclick="clearLinkHistory()" title="Clear Link History">🗑️</button>
+          </h3>
+          <div id="linkHistoryList" class="history-list"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -1089,6 +1160,18 @@ const CHUNK_LIMIT = 70000;
 let cmEditor = null;
 let currentFontSize = 13.5;
 let errorLineWidgets = [];
+
+// UNIQUE CREATOR TOKEN (Ensures only User A who created a link can edit that link)
+function getCreatorToken() {
+  let token = localStorage.getItem("mk_creator_uid");
+  if (!token) {
+    token = "mk_uid_" + Date.now().toString(36) + "_" + Math.random().toString(36).substring(2, 12);
+    localStorage.setItem("mk_creator_uid", token);
+  }
+  return token;
+}
+// Initialize token right away
+getCreatorToken();
 
 // INITIALIZE CODEMIRROR REAL HTML IDE
 function initCodeEditor() {
@@ -1221,19 +1304,54 @@ function setEditorCode(val) {
   }
 }
 
-// FULLSCREEN CODE EDITOR MODE & TOP PRO TOOLBAR ACTIONS
+// TRUE FULLSCREEN CODE EDITOR MODE & TOP PRO TOOLBAR ACTIONS
 function toggleFullscreenEditor() {
   const box = document.getElementById("editorBox");
-  box.classList.toggle("fullscreen-code-mode");
-  const isFS = box.classList.contains("fullscreen-code-mode");
-  document.getElementById("fsEditorBtn").innerText = isFS ? "✕ Exit Full Screen" : "⛶ Full Screen Editor";
+  const enteringFS = !box.classList.contains("fullscreen-code-mode");
+
+  if (enteringFS) {
+    box.classList.add("fullscreen-code-mode");
+    document.body.classList.add("fs-editor-active");
+    document.getElementById("fsEditorBtn").innerText = "✕ Exit Full Screen";
+
+    // Request True Browser Fullscreen API for 100% Native Full Screen
+    if (box.requestFullscreen) {
+      box.requestFullscreen().catch(() => {});
+    } else if (box.webkitRequestFullscreen) {
+      box.webkitRequestFullscreen();
+    }
+  } else {
+    box.classList.remove("fullscreen-code-mode");
+    document.body.classList.remove("fs-editor-active");
+    document.getElementById("fsEditorBtn").innerText = "⛶ Full Screen Editor";
+
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+    }
+  }
+
   if (cmEditor) {
     setTimeout(() => {
       cmEditor.refresh();
       cmEditor.focus();
-    }, 50);
+    }, 80);
   }
 }
+
+// Sync state if user exits native fullscreen via hardware Back/Esc button
+document.addEventListener("fullscreenchange", () => {
+  const box = document.getElementById("editorBox");
+  if (!document.fullscreenElement && box && box.classList.contains("fullscreen-code-mode")) {
+    box.classList.remove("fullscreen-code-mode");
+    document.body.classList.remove("fs-editor-active");
+    document.getElementById("fsEditorBtn").innerText = "⛶ Full Screen Editor";
+    if (cmEditor) setTimeout(() => cmEditor.refresh(), 50);
+  }
+});
 
 function toggleSplitLive() {
   const box = document.getElementById("editorBox");
@@ -1388,6 +1506,7 @@ function openStudio(){
   document.getElementById("appView").style.display = "block";
   initCodeEditor();
   loadHistory();
+  loadLinkHistory();
   if(!getEditorCode()) {
     loadTemplate({value: "basic"});
   } else {
@@ -1484,7 +1603,7 @@ function setDeviceMode(mode, btn) {
   }
 }
 
-// SAVE LOCAL
+// SAVE LOCAL FILES
 function saveLocal(){
   let name = prompt("Enter local file name:");
   if(!name) return;
@@ -1502,7 +1621,7 @@ function loadHistory(){
   box.innerHTML = "";
 
   if(Object.keys(files).length === 0){
-    box.innerHTML = "<p style='color:var(--text-muted); font-size:13px; text-align:center; padding:20px;'>No local files saved yet.</p>";
+    box.innerHTML = "<p style='color:var(--text-muted); font-size:12.5px; text-align:center; padding:15px;'>No local files saved yet.</p>";
     return;
   }
 
@@ -1520,9 +1639,83 @@ function loadHistory(){
   }
 }
 
-// CLOUD PAYLOAD BUILDER (HANDLES MASSIVE MULTI-THOUSAND LINE PROJECTS VIA LZ-COMPRESSION + MULTI-BIN CHUNKING)
-async function createCloudPayload(html, expireTime) {
+// SAVE & LOAD CREATED LINKS HISTORY (WITH CODE INSPECTION & RESTORE)
+function saveLinkToHistory(item) {
+  let list = JSON.parse(localStorage.getItem("mk_links_history") || "[]");
+  // Update if binId already exists, otherwise add to top
+  const existingIdx = list.findIndex(x => x.binId === item.binId);
+  if (existingIdx !== -1) {
+    list[existingIdx] = item;
+  } else {
+    list.unshift(item);
+  }
+  localStorage.setItem("mk_links_history", JSON.stringify(list));
+  loadLinkHistory();
+}
+
+function loadLinkHistory() {
+  let list = JSON.parse(localStorage.getItem("mk_links_history") || "[]");
+  let box = document.getElementById("linkHistoryList");
+  if (!box) return;
+  box.innerHTML = "";
+
+  if (list.length === 0) {
+    box.innerHTML = "<p style='color:var(--text-muted); font-size:12.5px; text-align:center; padding:15px;'>No links created yet.</p>";
+    return;
+  }
+
+  list.forEach((item, index) => {
+    let div = document.createElement("div");
+    div.className = "link-history-card";
+    const badgeColor = item.type === "Permanent" ? "#4ade80" : "#fbbf24";
+    const displayName = item.name ? item.name : `Link #${item.binId.slice(-5)}`;
+
+    div.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <b style="color:#f8fafc; font-size:12.5px; word-break:break-all;">🔗 ${displayName}</b>
+        <span style="font-size:10px; font-weight:700; color:${badgeColor}; border:1px solid ${badgeColor}; padding:1px 6px; border-radius:4px;">${item.type === "Permanent" ? "PERM" : "TEMP"}</span>
+      </div>
+      <div style="font-size:10.5px; color:var(--text-muted);">🕒 ${item.createdAt || "Just now"}</div>
+      <div class="link-card-actions">
+        <button class="mini-action-btn" onclick="loadCodeFromLinkHistory(${index})">💻 Load Code</button>
+        <button class="mini-action-btn" onclick="copyLinkFromHistory('${item.url}')">📋 Copy URL</button>
+        <a href="${item.url}" target="_blank" class="mini-action-btn" style="text-decoration:none; display:inline-flex; align-items:center;">🌐 Open</a>
+      </div>
+    `;
+    box.appendChild(div);
+  });
+}
+
+function loadCodeFromLinkHistory(index) {
+  let list = JSON.parse(localStorage.getItem("mk_links_history") || "[]");
+  if (list[index] && list[index].code !== undefined) {
+    setEditorCode(list[index].code);
+    preview();
+    updateStats();
+    showToast(`💻 Loaded code from '${list[index].name || list[index].binId}'`);
+  }
+}
+
+function copyLinkFromHistory(url) {
+  navigator.clipboard.writeText(url).then(() => {
+    showToast("📋 Link copied to clipboard!");
+  }).catch(() => {
+    prompt("Copy your link:", url);
+  });
+}
+
+function clearLinkHistory() {
+  if (confirm("Clear all created link history from this browser?")) {
+    localStorage.removeItem("mk_links_history");
+    loadLinkHistory();
+    showToast("🗑️ Link history cleared.");
+  }
+}
+
+// CLOUD PAYLOAD BUILDER (HANDLES MASSIVE MULTI-THOUSAND LINE PROJECTS + CREATOR LOCK + LINK NAME)
+async function createCloudPayload(html, expireTime, linkName = "", creatorToken = "") {
   const compressed = LZString.compressToUTF16 ? LZString.compressToEncodedURIComponent(html) : html;
+  const ownerUid = creatorToken || getCreatorToken();
 
   // Single Bin Path (Compressed fits inside a single JSONBin)
   if (compressed.length <= CHUNK_LIMIT) {
@@ -1530,7 +1723,9 @@ async function createCloudPayload(html, expireTime) {
       compressed: true,
       data: compressed,
       expire: expireTime,
-      protected: expireTime === null
+      protected: expireTime === null,
+      linkName: linkName || "",
+      creatorToken: ownerUid
     };
   }
 
@@ -1558,7 +1753,9 @@ async function createCloudPayload(html, expireTime) {
     chunked: true,
     chunks: chunkBinIds,
     expire: expireTime,
-    protected: expireTime === null
+    protected: expireTime === null,
+    linkName: linkName || "",
+    creatorToken: ownerUid
   };
 }
 
@@ -1571,6 +1768,8 @@ async function generate(){
   if(!inputTime) return;
 
   let expireTime;
+  let customLinkName = "";
+
   if(inputTime.trim().toLowerCase() === "permanent" || inputTime.trim().toLowerCase() === "p"){
     let pass = prompt("Enter password for permanent link:");
     if(pass !== "L"){
@@ -1578,6 +1777,12 @@ async function generate(){
       return;
     }
     expireTime = null;
+
+    // Optional Custom Link Name for Permanent Links
+    let namePrompt = prompt("Enter an optional name for your permanent link (or leave blank to skip):");
+    if (namePrompt && namePrompt.trim()) {
+      customLinkName = namePrompt.trim();
+    }
   } else {
     let minutes = parseFloat(inputTime);
     if(isNaN(minutes) || minutes <= 0){
@@ -1589,7 +1794,8 @@ async function generate(){
 
   showToast("⏳ Compressing & generating cloud link...");
   try{
-    const payload = await createCloudPayload(html, expireTime);
+    const myCreatorToken = getCreatorToken();
+    const payload = await createCloudPayload(html, expireTime, customLinkName, myCreatorToken);
 
     let res = await fetch("https://api.jsonbin.io/v3/b", {
       method:"POST",
@@ -1598,7 +1804,27 @@ async function generate(){
     });
     if (!res.ok) throw new Error("Failed to create master bin");
     let json = await res.json();
-    let link = location.origin + location.pathname + "?id=" + json.metadata.id;
+    let binId = json.metadata.id;
+
+    // Format clean URL slug if user named their permanent link
+    let slugParam = "";
+    if (customLinkName) {
+      let cleanSlug = encodeURIComponent(customLinkName.replace(/\s+/g, "-"));
+      slugParam = `&name=${cleanSlug}`;
+    }
+
+    let link = location.origin + location.pathname + "?id=" + binId + slugParam;
+
+    // Save to Local Link History with full code & metadata
+    saveLinkToHistory({
+      binId: binId,
+      name: customLinkName || (expireTime === null ? `Permanent-${binId.slice(-5)}` : `Temp-${binId.slice(-5)}`),
+      url: link,
+      code: html,
+      type: expireTime === null ? "Permanent" : "Temporary",
+      createdAt: new Date().toLocaleString(),
+      creatorToken: myCreatorToken
+    });
 
     // Exit full screen editor if open so user sees their generated link immediately
     const box = document.getElementById("editorBox");
@@ -1607,28 +1833,51 @@ async function generate(){
     }
 
     document.getElementById("linkBox").innerHTML = `
-      <p style="margin-top:12px; color:var(--accent-cyan); font-size:13.5px; font-weight:bold;">🔗 Generated Link (${expireTime === null ? 'Permanent' : 'Temporary'}):</p>
+      <p style="margin-top:12px; color:var(--accent-cyan); font-size:13.5px; font-weight:bold;">
+        🔗 Generated Link (${expireTime === null ? 'Permanent' : 'Temporary'}${customLinkName ? ' • ' + customLinkName : ''}):
+      </p>
       <input type="text" value="${link}" readonly onclick="this.select()">
     `;
-    showToast("✅ Cloud link generated successfully!");
+    showToast("✅ Cloud link generated & saved to history!");
   }catch(e){
     showToast("❌ Error generating link. Check network or API key.");
   }
 }
 
-// EDIT EXISTING LINK (SUPPORTS MASSIVE PROJECTS TOO)
+// EDIT EXISTING LINK (ONLY THE ORIGINAL CREATOR OF THAT LINK CAN EDIT IT)
 async function updateExistingLink(){
   let linkInput = prompt("Enter your full link or Bin ID to edit:");
   if(!linkInput) return;
   let binId = linkInput.trim();
   if(linkInput.includes("?id=")) { binId = linkInput.split("?id=")[1].split("&")[0]; }
 
+  let existingRecord = null;
   try {
     let checkRes = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, { headers: { "X-Master-Key": API_KEY } });
     let checkJson = await checkRes.json();
     if(!checkJson.record) { showToast("❌ Bin not found!"); return; }
-    if(checkJson.record.expire !== null && checkJson.record.expire !== undefined) {
+    existingRecord = checkJson.record;
+
+    if(existingRecord.expire !== null && existingRecord.expire !== undefined) {
       showToast("❌ Only permanent links can be edited.");
+      return;
+    }
+
+    // STRICT CREATOR LOCK: Check if current user is the original creator of this link
+    const myCreatorToken = getCreatorToken();
+    const localOwnedLinks = JSON.parse(localStorage.getItem("mk_links_history") || "[]");
+    const ownedInHistory = localOwnedLinks.some(item => item.binId === binId);
+
+    if (existingRecord.creatorToken) {
+      if (existingRecord.creatorToken !== myCreatorToken) {
+        showToast("⛔ Access Denied: Only the original creator of this link can edit it!");
+        alert("⛔ Permission Denied!\n\nYou cannot edit this link because it was created by another user. Only the original creator can update this link.");
+        return;
+      }
+    } else if (!ownedInHistory) {
+      // Fallback protection for links without token: must exist in creator's local history
+      showToast("⛔ Access Denied: Only the original creator of this link can edit it!");
+      alert("⛔ Permission Denied!\n\nOnly the original creator of this link can edit it.");
       return;
     }
   } catch(err) {
@@ -1642,16 +1891,39 @@ async function updateExistingLink(){
   let html = getEditorCode();
   if(!html){ showToast("⚠️ Code is empty!"); return; }
 
+  // Allow creator to keep or update the optional link name
+  let currentName = existingRecord.linkName || "";
+  let updatedName = prompt("Link name (optional - press OK to keep current name):", currentName);
+  if (updatedName === null) updatedName = currentName;
+  updatedName = updatedName.trim();
+
   showToast("⏳ Compressing & updating cloud link...");
   try{
-    const payload = await createCloudPayload(html, null);
+    const myCreatorToken = getCreatorToken();
+    const payload = await createCloudPayload(html, null, updatedName, myCreatorToken);
     let res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
       method:"PUT",
       headers:{ "Content-Type":"application/json", "X-Master-Key":API_KEY },
       body: JSON.stringify(payload)
     });
-    if(res.ok){ showToast("✅ Link successfully updated!"); }
-    else { showToast("❌ Failed to update link."); }
+    if(res.ok){
+      let slugParam = updatedName ? `&name=${encodeURIComponent(updatedName.replace(/\s+/g, "-"))}` : "";
+      let fullUrl = location.origin + location.pathname + "?id=" + binId + slugParam;
+
+      saveLinkToHistory({
+        binId: binId,
+        name: updatedName || `Permanent-${binId.slice(-5)}`,
+        url: fullUrl,
+        code: html,
+        type: "Permanent",
+        createdAt: new Date().toLocaleString() + " (Edited)",
+        creatorToken: myCreatorToken
+      });
+
+      showToast("✅ Link successfully updated!");
+    } else {
+      showToast("❌ Failed to update link.");
+    }
   }catch(e){ showToast("❌ Error updating link."); }
 }
 
@@ -1675,6 +1947,12 @@ async function loadViewer(){
     if(data.expire !== null && data.expire !== undefined && Date.now() > data.expire){
       document.body.innerHTML="<h2 style='text-align:center;margin-top:25vh; color:#f59e0b;'>⛔ This link has expired.</h2>";
       return;
+    }
+
+    // Set page title if the permanent link was given a custom name
+    let urlName = params.get("name");
+    if (data.linkName || urlName) {
+      document.title = (data.linkName || decodeURIComponent(urlName)) + " | MK HTML Cloud Studio";
     }
 
     let finalHtml = "";
