@@ -63,25 +63,59 @@
 
 ```mermaid
 graph LR
-    A[🚀 Launch Studio] --> B[💻 Code in True Full-Screen IDE]
-    B --> C[🌓 Test in Live / Split / Mobile Preview]
-    C --> D[🏷️ Name Link & Lock with Creator Token]
-    D --> E[🔗 Deploy Cloud Link & Save to Local History!]
+    A["🚀 Launch Studio"] --> B["💻 Code in True Full-Screen IDE"]
+    B --> C["🌓 Test in Live, Split or Mobile Preview"]
+    C --> D["🏷️ Name Link and Lock with Creator Token"]
+    D --> E["🔗 Deploy Cloud Link and Save to History"]
+```
 
-🌐 Connect & Follow Us
-​<div align="center">
-<a href="https://t.me/mk_bots0" target="_blank">
-<img src="https://img.shields.io/badge/Telegram_Channel-MK__BOTS™-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram" />
-</a>
-<a href="https://youtube.com/@tech_otc_tamil?si=iR8jcUcQG_UMLwYZ" target="_blank">
-<img src="https://img.shields.io/badge/YouTube-Tech__otc__tamil-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="YouTube" />
-</a>
-<a href="mailto:OTCTECH3@GMAIL.COM">
-<img src="https://img.shields.io/badge/Email-OTCTECH3%40GMAIL.COM-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" />
-</a>
+1. **Launch Studio:** Open the live web application and click **🚀 Launch Studio Workspace** from the animated landing page.
+2. **Code with Pro Tools:** Write your code with real-time `<tag>` autocomplete, red-line error detection, or enter **⛶ Full Screen Editor** for a 100% native full-screen coding experience.
+3. **Test & Inspect:** Click **▶ Run Preview**, toggle **🌓 Split Live Preview**, or open the **🔍 Full Screen Preview Suite** to test mobile and desktop responsiveness.
+4. **Deploy & Manage History:** Click **🚀 Generate Link**, choose temporary minutes or type `permanent` (with master password `L`), optionally name your link, and access your link or reload its code anytime from the **🔗 Created Links History** panel!
+
+---
+
+## ⌨️ Pro IDE Keyboard Shortcuts
+
+| Shortcut | Action |
+| :---: | :--- |
+| `<` or `Ctrl + Space` | Trigger HTML Tag & Attribute Autocomplete |
+| `F11` | Toggle True 100% Native Full-Screen Code Editor Mode |
+| `Esc` | Exit Native Full-Screen Code Editor Mode |
+| `Ctrl + F` / `Cmd + F` | Open Find & Search Bar inside Code Editor |
+
+---
+
+## 📂 File Structure
+
+```text
+📦 MK-HTML-Cloud-Studio
+ ┣ 📜 index.html       # All-in-one Cloud IDE, Creator-Lock Engine, Link History & Multi-Bin Viewer
+ ┗ 📜 README.md        # Animated Project Documentation
+```
+
+---
+
+## 🌐 Connect & Follow Us
+
+<div align="center">
+  <a href="https://t.me/mk_bots0" target="_blank">
+    <img src="https://img.shields.io/badge/Telegram_Channel-MK__BOTS™-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram" />
+  </a>
+  <a href="https://youtube.com/@tech_otc_tamil?si=iR8jcUcQG_UMLwYZ" target="_blank">
+    <img src="https://img.shields.io/badge/YouTube-Tech__otc__tamil-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="YouTube" />
+  </a>
+  <a href="mailto:OTCTECH3@GMAIL.COM">
+    <img src="https://img.shields.io/badge/Email-OTCTECH3%40GMAIL.COM-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" />
+  </a>
 </div>
-​<div align="center">
-<b>ᴘᴏᴡᴇʀᴇᴅ ʙʏ <a href="https://t.me/mk_bots0">ᴍᴋ_ʙᴏᴛs™</a> | ᴀʟʟ ʀɪɢʜᴛs ʀᴇsᴇʀᴠᴇᴅ ♡</b>
+
+<br/>
+
+<div align="center">
+  <b>ᴘᴏᴡᴇʀᴇᴅ ʙʏ <a href="https://t.me/mk_bots0">ᴍᴋ_ʙᴏᴛs™</a> | ᴀʟʟ ʀɪɢʜᴛs ʀᴇsᴇʀᴠᴇᴅ ♡</b>
 </div>
-​<!-- 🌊 ANIMATED WAVE FOOTER -->
+
+<!-- 🌊 ANIMATED WAVE FOOTER -->
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:38bdf8,50:1d4ed8,100:030712&height=120&section=footer" width="100%" />
