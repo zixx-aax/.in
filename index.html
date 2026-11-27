@@ -5,16 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MK HTML Cloud Studio | Professional Cloud Workspace</title>
 
-<!-- CodeMirror 5 Core & Addons for Real HTML IDE Experience -->
+<!-- CodeMirror 5 Core, Themes & Addons for Real HTML IDE Experience -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-ocean.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/monokai.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/cobalt.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/lint/lint.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/dialog/dialog.min.css">
 
-<!-- HTMLHint + LZString (Compression for Massive Multi-Thousand Line Projects) -->
+<!-- HTMLHint + LZString (Compression for Massive Multi-Thousand Line Projects) + Client-Side QRCode -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/htmlhint/1.1.4/htmlhint.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <!-- CodeMirror Scripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
@@ -44,6 +48,7 @@
   --accent-cyan: #38bdf8;
   --accent-blue: #2563eb;
   --accent-purple: #818cf8;
+  --accent-gold: #f59e0b;
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
 }
@@ -90,11 +95,82 @@ body {
   50% { box-shadow: 0 0 45px rgba(56, 189, 248, 0.8); }
 }
 
+@keyframes goldPulse {
+  0%, 100% { box-shadow: 0 0 14px rgba(245, 158, 11, 0.35); }
+  50% { box-shadow: 0 0 28px rgba(251, 191, 36, 0.7); }
+}
+
+@keyframes mkSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Top Utility Bar on Landing */
+.landing-topbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+/* Premium & Status Badges */
+.pro-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #030712;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 999px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.tier-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  background: rgba(15, 23, 42, 0.85);
+  color: #cbd5e1;
+}
+.tier-pill.is-premium {
+  border-color: #fbbf24;
+  background: rgba(245, 158, 11, 0.16);
+  color: #fde68a;
+  animation: goldPulse 3s infinite;
+}
+
+.ping-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  color: #fbbf24;
+}
+.ping-pill.turbo {
+  border-color: #4ade80;
+  color: #4ade80;
+  background: rgba(22, 163, 74, 0.16);
+}
+
 /* Landing Page Styles */
 .landing-container {
   max-width: 1100px;
   margin: auto;
-  padding: 50px 20px;
+  padding: 28px 20px 50px;
   text-align: center;
   animation: fadeInScale 0.6s ease forwards;
 }
@@ -159,12 +235,70 @@ body {
   box-shadow: 0 15px 35px rgba(56, 189, 248, 0.6);
 }
 
+/* Dynamic Ad Banner Slot (Hidden for Premium Users) */
+.ad-banner-slot {
+  margin: 22px auto;
+  max-width: 980px;
+  background: rgba(10, 15, 30, 0.9);
+  border: 1px dashed rgba(245, 158, 11, 0.45);
+  border-radius: 14px;
+  padding: 10px 14px;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+.ad-banner-slot.visible {
+  display: flex;
+}
+.ad-banner-tag {
+  align-self: flex-start;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.14);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.ad-banner-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  text-decoration: none;
+  color: #f8fafc;
+}
+.ad-banner-link img {
+  max-width: 100%;
+  max-height: 120px;
+  border-radius: 8px;
+  object-fit: contain;
+}
+.ad-banner-fallback {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.25), rgba(124, 58, 237, 0.25));
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  text-align: left;
+}
+
 /* Stats Counter Grid */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 15px;
-  margin-top: 40px;
+  margin-top: 32px;
 }
 .stat-card {
   background: var(--panel-bg);
@@ -223,6 +357,61 @@ body {
   color: var(--text-muted);
   font-size: 13.5px;
   line-height: 1.5;
+}
+
+/* Premium Plans Showcase on Landing */
+.plans-section {
+  margin-top: 40px;
+  background: var(--panel-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 20px;
+  padding: 30px;
+  text-align: left;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+}
+.plans-section h2 {
+  color: #fbbf24;
+  margin-bottom: 8px;
+  font-size: 22px;
+}
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+.plan-card {
+  background: rgba(2, 6, 23, 0.75);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.25s, border-color 0.25s;
+}
+.plan-card:hover {
+  transform: translateY(-4px);
+  border-color: #fbbf24;
+}
+.plan-card.popular {
+  border-color: #fbbf24;
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.12), rgba(2, 6, 23, 0.85));
+}
+.plan-duration {
+  font-size: 17px;
+  font-weight: 800;
+  color: #f8fafc;
+}
+.plan-perks {
+  list-style: none;
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 4px 0 8px;
 }
 
 /* How It Works Section */
@@ -375,9 +564,9 @@ body {
 
 /* App Studio Workspace Styles */
 .app-container {
-  max-width: 1150px;
+  max-width: 1180px;
   margin: auto;
-  padding: 25px 20px;
+  padding: 20px 20px 35px;
   display: none;
   animation: fadeInScale 0.4s ease forwards;
 }
@@ -386,10 +575,12 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
   background: var(--panel-bg);
   backdrop-filter: blur(16px);
-  padding: 14px 22px;
+  padding: 14px 20px;
   border: 1px solid var(--border-color);
   border-radius: 14px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.5);
@@ -399,16 +590,50 @@ body {
   background: linear-gradient(90deg, #38bdf8, #818cf8);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
+}
+
+.studio-status-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 10px 16px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+/* Fast-Edit Active Deployment Banner */
+.active-edit-banner {
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, rgba(22, 163, 74, 0.22), rgba(15, 23, 42, 0.95));
+  border: 1px solid #4ade80;
+  border-radius: 10px;
+  font-size: 12.5px;
+  color: #dcfce7;
+  animation: fadeInScale 0.2s ease forwards;
+}
+.active-edit-banner.visible {
+  display: flex;
 }
 
 .workspace-grid {
   display: grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: 1fr 340px;
   gap: 20px;
 }
-@media(max-width: 900px) {
+@media(max-width: 920px) {
   .workspace-grid { grid-template-columns: 1fr; }
 }
 
@@ -441,13 +666,12 @@ body {
   border-radius: 6px;
   cursor: pointer;
   outline: none;
+  font-size: 12px;
 }
 
 /* CodeMirror Custom IDE Styling & Red Error Highlighting */
 .CodeMirror {
   height: 360px;
-  background: rgba(2, 6, 23, 0.95) !important;
-  color: #f8fafc !important;
   font-family: 'Fira Code', 'Consolas', 'Courier New', monospace;
   font-size: 13.5px;
   line-height: 1.55;
@@ -455,12 +679,15 @@ body {
   border-radius: 10px;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
+.CodeMirror.cm-s-material-ocean {
+  background: rgba(2, 6, 23, 0.95) !important;
+  color: #f8fafc !important;
+}
 .CodeMirror-focused {
   border-color: var(--accent-cyan);
   box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
 }
 .CodeMirror-gutters {
-  background: #060d1f !important;
   border-right: 1px solid rgba(56, 189, 248, 0.2) !important;
 }
 .CodeMirror-ActiveLine-background {
@@ -509,11 +736,13 @@ li.CodeMirror-hint-active {
   color: #ffffff !important;
 }
 
-/* Live Error Diagnostic Bar */
+/* Live Error Diagnostic Bar & Payload Size Meter */
 .error-status-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
   padding: 6px 12px;
   margin-top: 6px;
   border-radius: 8px;
@@ -528,6 +757,45 @@ li.CodeMirror-hint-active {
 }
 .error-status-bar.clean {
   color: #4ade80;
+}
+.draft-badge {
+  font-size: 11px;
+  color: #38bdf8;
+  opacity: 0.9;
+}
+
+.payload-meter-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(2, 6, 23, 0.8);
+  border: 1px solid rgba(56, 189, 248, 0.18);
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+.payload-progress-track {
+  flex: 1;
+  min-width: 100px;
+  max-width: 220px;
+  height: 6px;
+  background: #1e293b;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.payload-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
+  border-radius: 999px;
+  transition: width 0.25s ease;
+}
+.payload-progress-fill.multi-bin {
+  background: linear-gradient(90deg, #f59e0b, #ef4444);
 }
 
 /* True Full Screen Code Editor Mode */
@@ -563,7 +831,8 @@ body.fs-editor-active {
 .editor-box.fullscreen-code-mode .preview-wrapper,
 .editor-box.fullscreen-code-mode #linkBox,
 .editor-box.fullscreen-code-mode .btn-group,
-.editor-box.fullscreen-code-mode .editor-toolbar {
+.editor-box.fullscreen-code-mode .editor-toolbar,
+.editor-box.fullscreen-code-mode .payload-meter-bar {
   display: none !important;
 }
 .editor-box.fullscreen-code-mode.split-live .ide-workspace-split {
@@ -654,11 +923,18 @@ button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
 }
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none !important;
+}
 
 .btn-green { background: linear-gradient(135deg, #16a34a, #15803d) !important; }
 .btn-purple { background: linear-gradient(135deg, #7c3aed, #6d28d9) !important; }
 .btn-cyan { background: linear-gradient(135deg, #0284c7, #0369a1) !important; }
+.btn-gold { background: linear-gradient(135deg, #f59e0b, #d97706) !important; color: #030712 !important; font-weight: 800 !important; }
 .btn-secondary { background: linear-gradient(135deg, #475569, #334155) !important; box-shadow: none !important; }
+.btn-danger { background: linear-gradient(135deg, #dc2626, #b91c1c) !important; }
 
 .preview-wrapper {
   position: relative;
@@ -669,6 +945,8 @@ button:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
   background: #1e293b;
   padding: 8px 14px;
   border-radius: 10px 10px 0 0;
@@ -676,6 +954,34 @@ button:hover {
   color: #cbd5e1;
   border: 1px solid var(--border-color);
   border-bottom: none;
+}
+
+.preview-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.toggle-pill {
+  padding: 4px 10px;
+  font-size: 11px;
+  border-radius: 20px;
+  background: #0f172a;
+  color: #94a3b8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  cursor: pointer;
+  box-shadow: none;
+}
+.toggle-pill.active {
+  background: rgba(22, 163, 74, 0.25);
+  color: #4ade80;
+  border-color: #4ade80;
+}
+.toggle-pill.has-err {
+  background: rgba(220, 38, 38, 0.25);
+  color: #fca5a5;
+  border-color: #ef4444;
 }
 
 .studio-preview-container {
@@ -704,6 +1010,96 @@ button:hover {
 .studio-watermark-footer a { color: #38bdf8; text-decoration: none; font-weight: 600; }
 .studio-watermark-footer a:hover { text-decoration: underline; }
 
+/* Built-in Mini JS Console Drawer */
+.console-drawer {
+  display: none;
+  margin-top: 8px;
+  background: #020617;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.console-drawer.open {
+  display: block;
+}
+.console-drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  background: #0f172a;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+  font-size: 11.5px;
+  color: var(--accent-cyan);
+  font-weight: 600;
+}
+.console-output {
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 8px 10px;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 11.5px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.console-line {
+  padding: 4px 8px;
+  border-radius: 4px;
+  word-break: break-word;
+  white-space: pre-wrap;
+  background: rgba(15, 23, 42, 0.6);
+  color: #e2e8f0;
+  border-left: 3px solid #38bdf8;
+}
+.console-line.warn {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fde68a;
+  border-left-color: #f59e0b;
+}
+.console-line.error {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border-left-color: #ef4444;
+}
+
+/* Generated Link Box Upgraded Card */
+.generated-link-card {
+  margin-top: 14px;
+  background: rgba(2, 6, 23, 0.85);
+  border: 1px solid var(--accent-cyan);
+  border-radius: 12px;
+  padding: 14px;
+  animation: fadeInScale 0.25s ease forwards;
+}
+.generated-link-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.qr-preview-box {
+  display: none;
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 10px;
+  text-align: center;
+}
+.qr-preview-box.open {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.qr-canvas-wrap {
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
 /* Sidebar History */
 .sidebar-panel {
   background: var(--panel-bg);
@@ -713,25 +1109,34 @@ button:hover {
   padding: 18px;
   display: flex;
   flex-direction: column;
-  max-height: 780px;
+  max-height: 920px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   gap: 14px;
 }
 
 .sidebar-panel h3 {
   font-size: 14.5px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   color: #cbd5e1;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+.sidebar-search-input {
+  width: 100%;
+  padding: 7px 10px !important;
+  margin-top: 0 !important;
+  margin-bottom: 8px;
+  font-size: 12px !important;
+  background: rgba(2, 6, 23, 0.85) !important;
+}
+
 .history-list {
   overflow-y: auto;
   flex: 1;
-  min-height: 140px;
-  max-height: 310px;
+  min-height: 110px;
+  max-height: 270px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -751,10 +1156,21 @@ button:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 6px;
+}
+.card.pinned {
+  border-color: rgba(245, 158, 11, 0.55);
+  background: rgba(245, 158, 11, 0.08);
 }
 .card:hover {
   background: rgba(30, 41, 59, 0.9);
   border-color: var(--accent-cyan);
+}
+.card-title-wrap {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
 }
 
 .link-history-card {
@@ -767,6 +1183,15 @@ button:hover {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  cursor: pointer;
+}
+.link-history-card.pinned {
+  border-color: rgba(245, 158, 11, 0.55);
+  background: rgba(245, 158, 11, 0.07);
+}
+.link-history-card.active-editing {
+  border-color: #4ade80;
+  background: rgba(22, 163, 74, 0.14);
 }
 .link-history-card:hover {
   border-color: var(--accent-cyan);
@@ -774,7 +1199,7 @@ button:hover {
 }
 .link-card-actions {
   display: flex;
-  gap: 6px;
+  gap: 5px;
   flex-wrap: wrap;
   margin-top: 2px;
 }
@@ -791,12 +1216,51 @@ button:hover {
 .mini-action-btn:hover {
   background: var(--accent-blue);
   color: white;
+  transform: none;
+}
+.mini-action-btn.update-btn {
+  background: rgba(22, 163, 74, 0.22);
+  border-color: rgba(74, 222, 128, 0.5);
+  color: #86efac;
+}
+.mini-action-btn.update-btn:hover {
+  background: #16a34a;
+  color: white;
+}
+.mini-action-btn.pin-btn.active {
+  background: rgba(245, 158, 11, 0.25);
+  border-color: #fbbf24;
+  color: #fde68a;
+}
+.mini-action-btn.del-btn:hover {
+  background: #dc2626;
+  border-color: #ef4444;
+  color: white;
 }
 
-input[type="text"] {
+.backup-bar {
+  border-top: 1px solid rgba(56, 189, 248, 0.2);
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.backup-bar-btns {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.backup-bar-btns button {
+  flex: 1;
+  justify-content: center;
+  padding: 7px 10px;
+  font-size: 11.5px;
+}
+
+input[type="text"], input[type="password"], input[type="number"], input[type="url"], select.modal-select {
   width: 100%;
   padding: 10px;
-  margin-top: 8px;
+  margin-top: 6px;
   background: #020617;
   color: var(--accent-cyan);
   border: 1px solid var(--border-color);
@@ -804,6 +1268,195 @@ input[type="text"] {
   box-sizing: border-box;
   outline: none;
   font-size: 13px;
+}
+input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus, input[type="url"]:focus, select.modal-select:focus {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+}
+
+/* Custom Dark Glassmorphic Studio Modal */
+.studio-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.82);
+  backdrop-filter: blur(8px);
+  z-index: 35000;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  overflow-y: auto;
+}
+.studio-modal-overlay.open {
+  display: flex;
+}
+.studio-modal {
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: rgba(10, 15, 30, 0.97);
+  border: 1px solid var(--accent-cyan);
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 30px rgba(56, 189, 248, 0.18);
+  animation: fadeInScale 0.2s ease forwards;
+}
+.studio-modal.wide {
+  max-width: 740px;
+}
+.studio-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.studio-modal-header h3 {
+  color: var(--accent-cyan);
+  font-size: 17px;
+  font-weight: 700;
+}
+.modal-close-x {
+  background: transparent !important;
+  color: #94a3b8 !important;
+  box-shadow: none !important;
+  padding: 4px 8px !important;
+  font-size: 16px !important;
+}
+.modal-close-x:hover {
+  color: white !important;
+  transform: none !important;
+}
+.modal-field {
+  margin-bottom: 12px;
+}
+.modal-field label {
+  display: block;
+  font-size: 12px;
+  color: #cbd5e1;
+  font-weight: 600;
+}
+.modal-tabs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.modal-tab-btn {
+  justify-content: center;
+  background: #0f172a !important;
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
+  color: #94a3b8 !important;
+  box-shadow: none !important;
+  padding: 9px 10px !important;
+}
+.modal-tab-btn.active {
+  background: linear-gradient(135deg, var(--accent-blue), #1d4ed8) !important;
+  color: white !important;
+  border-color: var(--accent-cyan) !important;
+}
+.modal-error-msg {
+  color: #fca5a5;
+  background: rgba(127, 29, 29, 0.35);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+  margin-bottom: 12px;
+  display: none;
+}
+.modal-footer-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+/* Diff, Code Inspector & Version Rows */
+.version-row {
+  background: rgba(2, 6, 23, 0.85);
+  border: 1px solid rgba(56, 189, 248, 0.22);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.version-code-viewer {
+  background: #020617;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 8px;
+  padding: 10px;
+  max-height: 240px;
+  overflow: auto;
+  font-family: 'Fira Code', monospace;
+  font-size: 11.5px;
+  color: #e2e8f0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-top: 10px;
+}
+.diff-box {
+  background: #020617;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 8px;
+  padding: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+  font-family: 'Fira Code', monospace;
+  font-size: 11px;
+  margin-top: 8px;
+}
+.diff-add { background: rgba(22, 163, 74, 0.2); color: #86efac; padding: 1px 4px; }
+.diff-del { background: rgba(220, 38, 38, 0.2); color: #fca5a5; padding: 1px 4px; }
+.diff-ctx { color: #94a3b8; padding: 1px 4px; }
+
+/* Ad Modal & Rewarded Ad Player */
+.ad-media-stage {
+  width: 100%;
+  background: #020617;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.ad-media-stage img.ad-img-landscape {
+  max-width: 100%;
+  max-height: 240px;
+  border-radius: 8px;
+  object-fit: contain;
+}
+.ad-media-stage img.ad-img-portrait {
+  max-width: 100%;
+  max-height: 360px;
+  border-radius: 8px;
+  object-fit: contain;
+}
+.ad-media-stage img.ad-img-banner {
+  width: 100%;
+  max-height: 140px;
+  border-radius: 8px;
+  object-fit: contain;
+}
+.ad-video-wrap {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+}
+.ad-video-wrap iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
 }
 
 /* Full Screen Modal */
@@ -823,6 +1476,8 @@ input[type="text"] {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
   border-bottom: 1px solid var(--border-color);
 }
 .device-toggles { display: flex; gap: 6px; }
@@ -843,7 +1498,7 @@ input[type="text"] {
   justify-content: center;
   align-items: center;
   background: #020617;
-  overflow: hidden;
+  overflow: auto;
   padding: 15px;
 }
 .fullscreen-viewport-wrap iframe {
@@ -852,10 +1507,20 @@ input[type="text"] {
   border: none;
   border-radius: 6px;
   background: white;
+  transition: width 0.25s ease, height 0.25s ease;
 }
 .fullscreen-viewport-wrap.mobile iframe {
   width: 375px;
+  max-width: 100%;
   height: 680px;
+  max-height: 100%;
+  box-shadow: 0 0 40px rgba(0,0,0,0.8);
+  border: 6px solid #1e293b;
+}
+.fullscreen-viewport-wrap.tablet iframe {
+  width: 768px;
+  max-width: 100%;
+  height: 100%;
   box-shadow: 0 0 40px rgba(0,0,0,0.8);
   border: 6px solid #1e293b;
 }
@@ -871,15 +1536,44 @@ input[type="text"] {
   border-radius: 8px;
   border: 1px solid var(--accent-cyan);
   box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-  z-index: 30000;
+  z-index: 45000;
   display: none;
   font-size: 13.5px;
 }
 
-/* Viewer Layout & Watermark Footer */
+/* Viewer Layout, Passcode Lock, Loader & Watermark Footer */
 .viewer-container { display: flex; flex-direction: column; height: 100vh; margin: 0; }
 .iframe-wrap { flex-grow: 1; width: 100%; background: #020617; }
 .iframe-wrap iframe { width: 100%; height: 100%; border: none; }
+.viewer-loader {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  gap: 16px;
+  background: #030712;
+  color: #cbd5e1;
+  text-align: center;
+  padding: 20px;
+}
+.viewer-spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid rgba(56, 189, 248, 0.2);
+  border-top-color: #38bdf8;
+  border-radius: 50%;
+  animation: mkSpin 0.85s linear infinite;
+}
+.viewer-lock-card {
+  max-width: 380px;
+  width: 100%;
+  background: rgba(10, 15, 30, 0.95);
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  border-radius: 16px;
+  padding: 26px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+}
 .cloud-footer {
   background: #0f172a;
   color: var(--text-muted);
@@ -903,6 +1597,11 @@ input[type="text"] {
 
   <!-- LANDING PAGE -->
   <div id="landingView" class="landing-container">
+    <div class="landing-topbar">
+      <span id="landingTierPill" class="tier-pill">🆓 Free Plan</span>
+      <button class="btn-gold" style="padding:7px 14px;" onclick="openPremiumModal()">👑 Go Premium / Redeem</button>
+    </div>
+
     <div class="hero-badge">
       <span></span> Next-Gen Cloud Development Suite
     </div>
@@ -912,6 +1611,9 @@ input[type="text"] {
     </p>
     <button class="cta-btn" onclick="openStudio()">🚀 Launch Studio Workspace</button>
 
+    <!-- LANDING BANNER AD SLOT (Auto-hidden for Premium users) -->
+    <div id="landingAdSlot" class="ad-banner-slot"></div>
+
     <!-- LIVE STATS COUNTER GRID -->
     <div class="stats-grid">
       <div class="stat-card">
@@ -919,8 +1621,8 @@ input[type="text"] {
         <div class="stat-label">Cloud Uptime</div>
       </div>
       <div class="stat-card">
-        <div class="stat-number">less than 50ms</div>
-        <div class="stat-label">Render Latency</div>
+        <div class="stat-number" id="landingPingStat">less than 50ms</div>
+        <div class="stat-label">Premium Turbo Latency</div>
       </div>
       <div class="stat-card">
         <div class="stat-number">Unlimited</div>
@@ -930,16 +1632,69 @@ input[type="text"] {
 
     <div class="features-grid">
       <div class="feature-card">
-        <h3>⚡ High-Performance IDE & Preview</h3>
-        <p>Smart HTML tag autocomplete, red-line live syntax error detection, full-screen coding mode, and responsive viewports.</p>
+        <h3>⚡ High-Performance IDE &amp; Preview</h3>
+        <p>Smart HTML tag autocomplete, red-line live syntax error detection, full-screen coding mode, built-in JS console, pro themes, and responsive viewports.</p>
       </div>
       <div class="feature-card">
         <h3>🔗 Massive Project Cloud Links</h3>
-        <p>Powered by LZ-Compression and Multi-Bin Chunking to deploy thousands of lines of code effortlessly.</p>
+        <p>Powered by LZ-Compression and Multi-Bin Chunking to deploy thousands of lines of code effortlessly with live payload meter, QR, and passcode locks.</p>
       </div>
       <div class="feature-card">
-        <h3>✏️ Live Cloud Link Editing</h3>
-        <p>Never lose your updates. Securely verify your creator ownership and push real-time code updates to existing URLs.</p>
+        <h3>✏️ Fast Updates &amp; Version History</h3>
+        <p>Tap any deployed code to browse v1, v2, v3+ versions, reuse any old version, and push live updates without ever typing a Bin ID.</p>
+      </div>
+    </div>
+
+    <!-- PREMIUM PLANS SHOWCASE -->
+    <div class="plans-section">
+      <h2>👑 MK Cloud Premium Plans</h2>
+      <p style="color:var(--text-muted); font-size:13.5px; line-height:1.5;">
+        Upgrade for an ad-free studio, unlimited daily deployments, boosted fast-ping priority routing, unlimited bandwidth feel, and full access to Pro features.
+      </p>
+      <div class="plans-grid">
+        <div class="plan-card">
+          <div class="plan-duration">⚡ 1 Day Pass</div>
+          <ul class="plan-perks">
+            <li>✓ 100% Ad-Free Studio</li>
+            <li>✓ Unlimited Deployments</li>
+            <li>✓ Turbo Fast Ping Boost</li>
+            <li>✓ All PRO IDE Features</li>
+          </ul>
+          <button class="btn-cyan" style="justify-content:center;" onclick="openPremiumModal('1d')">Activate / Redeem</button>
+        </div>
+        <div class="plan-card">
+          <div class="plan-duration">🔥 1 Week Pro</div>
+          <ul class="plan-perks">
+            <li>✓ 100% Ad-Free Studio</li>
+            <li>✓ Unlimited Deployments</li>
+            <li>✓ Passcode Viewer Locks</li>
+            <li>✓ Code Diff &amp; Pro Themes</li>
+          </ul>
+          <button class="btn-cyan" style="justify-content:center;" onclick="openPremiumModal('1w')">Activate / Redeem</button>
+        </div>
+        <div class="plan-card popular">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="plan-duration">👑 1 Month VIP</div>
+            <span class="pro-badge">Popular</span>
+          </div>
+          <ul class="plan-perks">
+            <li>✓ Zero Pop-ups &amp; Zero Ads</li>
+            <li>✓ Unlimited Bandwidth &amp; Ping</li>
+            <li>✓ Unlimited Daily Deploys</li>
+            <li>✓ Priority Cloud Engine</li>
+          </ul>
+          <button class="btn-gold" style="justify-content:center;" onclick="openPremiumModal('1m')">Activate / Redeem</button>
+        </div>
+        <div class="plan-card">
+          <div class="plan-duration">💎 1 Year Legend</div>
+          <ul class="plan-perks">
+            <li>✓ Full Year Ad-Free Access</li>
+            <li>✓ Unlimited Everything</li>
+            <li>✓ All Future Pro Tools</li>
+            <li>✓ VIP Fast-Track Routing</li>
+          </ul>
+          <button class="btn-purple" style="justify-content:center;" onclick="openPremiumModal('1y')">Activate / Redeem</button>
+        </div>
       </div>
     </div>
 
@@ -949,25 +1704,25 @@ input[type="text"] {
       <div class="workflow-steps">
         <div class="step-box">
           <div class="step-num">01</div>
-          <div class="step-title">Write or Load Code</div>
-          <div class="step-desc">Type HTML/CSS/JS with real-time tag suggestions and live red-line syntax error checking.</div>
+          <div class="step-title">Write or Import Code</div>
+          <div class="step-desc">Type HTML/CSS/JS with real-time tag suggestions, live red-line syntax error checking, auto-save drafts, UI snippets, or import an existing .html file.</div>
         </div>
         <div class="step-box">
           <div class="step-num">02</div>
-          <div class="step-title">Test Live Preview</div>
-          <div class="step-desc">Inspect your application in real-time with full mobile, desktop, and split-screen modes.</div>
+          <div class="step-title">Test Live Preview &amp; Console</div>
+          <div class="step-desc">Inspect your application in real-time with Auto-Run, JS Console logs, payload chunk estimator, and mobile, tablet, desktop, and split-screen modes.</div>
         </div>
         <div class="step-box">
           <div class="step-num">03</div>
-          <div class="step-title">Deploy to Cloud</div>
-          <div class="step-desc">Generate a permanent or temporary shareable link—even for massive multi-thousand-line projects.</div>
+          <div class="step-title">Deploy &amp; Fast-Update Versions</div>
+          <div class="step-desc">Generate a shareable link with QR &amp; passcode lock, then tap any Deployed Code anytime to inspect v1/v2/v3 history and push fast updates.</div>
         </div>
       </div>
     </div>
 
     <!-- DOCUMENTATION / FAQ SECTION -->
     <div class="doc-section">
-      <h2>📖 Documentation & User Guide</h2>
+      <h2>📖 Documentation &amp; User Guide</h2>
       
       <div class="accordion-item" onclick="toggleAccordion(this)">
         <div class="accordion-question">
@@ -975,34 +1730,44 @@ input[type="text"] {
           <span>▼</span>
         </div>
         <div class="accordion-answer">
-          Type 'permanent' or 'p' when generating a link, enter your password (<strong>L</strong>), optionally give your link a custom name, and the platform will generate a permanent cloud URL carrying your branded watermark footer.
+          Click 'Generate Link', choose <strong>Permanent</strong>, enter your password (<strong>L</strong>), optionally give your link a custom name (and a visitor passcode if you have Premium), and the platform will generate a permanent cloud URL carrying your branded watermark footer.
         </div>
       </div>
 
       <div class="accordion-item" onclick="toggleAccordion(this)">
         <div class="accordion-question">
-          <span>Can I edit my code after generating a link?</span>
+          <span>How do I fast-update or reuse older deployment versions?</span>
           <span>▼</span>
         </div>
         <div class="accordion-answer">
-          Yes! Click the 'Edit Link' button in the studio, enter your link or Bin ID along with your password (<strong>L</strong>). Only the original creator device that generated the link has permission to edit it.
+          Tap any item inside your <strong>🚀 Deployed Codes</strong> sidebar to view every saved version (v1, v2, v3...), inspect or reuse any old version in the editor, or tap <strong>✏️ Open &amp; Fast-Edit</strong> to edit/paste your new code and push it live without ever typing a Bin ID.
         </div>
       </div>
 
       <div class="accordion-item" onclick="toggleAccordion(this)">
         <div class="accordion-question">
-          <span>Are my local files and created links safe?</span>
+          <span>What is the difference between Free and Premium plans?</span>
           <span>▼</span>
         </div>
         <div class="accordion-answer">
-          All local projects and every cloud link you create (along with its source code) are automatically saved inside your browser's local storage history so you can view, copy, or reload their code anytime.
+          Free users can deploy up to 2 projects per day with ad support and standard routing. Premium users (1 Day, 1 Week, 1 Month, or 1 Year via one-time redemption codes) get an ad-free studio, unlimited deployments, boosted fast-ping priority routing, Password-Protected Viewer Links, Code Diff comparison, and Pro IDE themes.
+        </div>
+      </div>
+
+      <div class="accordion-item" onclick="toggleAccordion(this)">
+        <div class="accordion-question">
+          <span>Are my local files and deployed codes safe?</span>
+          <span>▼</span>
+        </div>
+        <div class="accordion-answer">
+          All local projects, your active draft, and every deployed code (along with all its v1/v2/v3 version history) are automatically saved inside your browser's local storage. You can also export a JSON backup (including your creator key) anytime from the sidebar to transfer everything safely to another browser or device.
         </div>
       </div>
     </div>
 
     <!-- FOLLOW US SOCIAL SECTION -->
     <div class="social-section">
-      <h3>🌐 Connect & Follow Us</h3>
+      <h3>🌐 Connect &amp; Follow Us</h3>
       <div class="social-grid">
         <a href="https://t.me/mk_bots0" target="_blank" class="social-card">📢 Telegram Channel</a>
         <a href="https://youtube.com/@tech_otc_tamil?si=iR8jcUcQG_UMLwYZ" target="_blank" class="social-card">▶ YouTube: Tech_otc_tamil</a>
@@ -1023,12 +1788,50 @@ input[type="text"] {
   <div id="appView" class="app-container">
     <div class="app-header-bar">
       <h2>⚡ MK HTML Cloud Studio</h2>
-      <button class="btn-secondary" onclick="returnToLanding()">🏠 Home</button>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <button class="btn-cyan" style="padding:7px 12px;" onclick="triggerImportFile()">📂 Import .html</button>
+        <button class="btn-secondary" style="padding:7px 12px;" onclick="exportHtmlFile()">⬇️ Export .html</button>
+        <button class="btn-secondary" style="padding:7px 12px;" onclick="copyEditorCode()">📋 Copy Code</button>
+        <button class="btn-gold" style="padding:7px 12px;" onclick="openPremiumModal()">👑 Premium</button>
+        <button class="btn-secondary" style="padding:7px 12px;" onclick="returnToLanding()">🏠 Home</button>
+      </div>
     </div>
+
+    <!-- STUDIO STATUS STRIP (Tier, Daily Quota, Live Ping Boost) -->
+    <div class="studio-status-strip">
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <span id="studioTierPill" class="tier-pill">🆓 Free Plan</span>
+        <span id="deployQuotaText" style="color:#cbd5e1; font-weight:600;">Deployments Today: 0 / 2</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <span id="studioPingPill" class="ping-pill">🐢 Standard Routing (~180ms)</span>
+        <span id="premiumExpiryText" style="color:#fde68a; font-size:11.5px; display:none;"></span>
+      </div>
+    </div>
+
+    <!-- STUDIO BANNER AD SLOT (Auto-hidden for Premium users) -->
+    <div id="studioAdSlot" class="ad-banner-slot" style="margin-top:0; margin-bottom:14px;"></div>
+
+    <!-- Hidden File Inputs for HTML Import & Studio JSON Backup Import -->
+    <input type="file" id="htmlFileInput" accept=".html,.htm,.txt" style="display:none;" onchange="handleImportFile(event)">
+    <input type="file" id="backupFileInput" accept=".json" style="display:none;" onchange="handleImportBackup(event)">
 
     <div class="workspace-grid">
       <!-- Main Editor Column -->
       <div id="editorBox" class="editor-box">
+
+        <!-- FAST-EDIT DEPLOYED CODE BANNER (Zero Bin ID typing!) -->
+        <div id="activeEditBanner" class="active-edit-banner">
+          <div>
+            <strong>✏️ Fast-Edit Mode:</strong>
+            <span id="activeEditLabel">Project (v1)</span>
+            <div style="font-size:11px; color:#86efac; margin-top:2px;">Edit or paste your updated code below, then click Update Live — no Bin ID needed!</div>
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="btn-green" style="padding:6px 12px;" onclick="triggerFastEditPush()">🚀 Update Live</button>
+            <button class="btn-secondary" style="padding:6px 10px;" onclick="exitFastEditMode()">✕ Exit</button>
+          </div>
+        </div>
 
         <!-- TOP PRO BAR (Visible in Full Screen Code Editor Mode) -->
         <div class="fs-editor-top-tools">
@@ -1039,6 +1842,7 @@ input[type="text"] {
             <button class="tool-chip" onclick="insertSnippet('script')">+ &lt;script&gt;</button>
             <button class="tool-chip" onclick="insertSnippet('flex')">+ Flex Box</button>
             <button class="tool-chip" onclick="formatCode()">✨ Format Code</button>
+            <button class="tool-chip" onclick="copyEditorCode()">📋 Copy</button>
             <button class="tool-chip" onclick="triggerAutocomplete()">💡 Suggest (Ctrl+Space)</button>
             <button class="tool-chip" onclick="cmEditor.execCommand('find')">🔍 Find</button>
             <button class="tool-chip" onclick="changeFontSize(1)">A+</button>
@@ -1061,6 +1865,20 @@ input[type="text"] {
               <option value="tailwind">Tailwind CSS Starter</option>
               <option value="game">Interactive Canvas Game</option>
             </select>
+            <select class="template-dropdown" onchange="insertUiBlock(this)">
+              <option value="">🧩 UI Snippets...</option>
+              <option value="navbar">Responsive Navbar</option>
+              <option value="glassCard">Neon Glass Card</option>
+              <option value="darkModal">Dark Modal Dialog</option>
+              <option value="fetchTemplate">Fetch JSON API Helper</option>
+              <option value="heroBanner">Hero CTA Section</option>
+            </select>
+            <select class="template-dropdown" id="themeSelector" onchange="changeEditorTheme(this)">
+              <option value="material-ocean">🎨 Material Ocean</option>
+              <option value="dracula">👑 Dracula (PRO)</option>
+              <option value="monokai">👑 Monokai (PRO)</option>
+              <option value="cobalt">👑 Cobalt (PRO)</option>
+            </select>
             <button class="btn-cyan" style="padding: 5px 10px;" onclick="formatCode()">✨ Format</button>
             <button class="btn-purple" style="padding: 5px 10px;" onclick="toggleFullscreenEditor()" id="fsEditorBtn">⛶ Full Screen Editor</button>
             <button class="btn-secondary" style="padding: 5px 10px;" onclick="clearEditor()">Clear</button>
@@ -1081,10 +1899,20 @@ input[type="text"] {
         <!-- Live Syntax Error Bar & Line Stats -->
         <div id="errorStatusBar" class="error-status-bar clean">
           <span id="lintStatusText">✅ Syntax Check: No HTML errors detected</span>
-          <div style="display:flex; gap:14px; color:var(--text-muted);">
+          <div style="display:flex; gap:14px; align-items:center; color:var(--text-muted); flex-wrap:wrap;">
+            <span id="draftStatus" class="draft-badge"></span>
             <span id="charCount">Characters: 0</span>
             <span id="lineCount">Lines: 0</span>
           </div>
+        </div>
+
+        <!-- Live Payload Size & Multi-Bin Chunk Estimator -->
+        <div class="payload-meter-bar">
+          <span id="payloadSizeLabel">📦 Payload: 0.0 KB raw → 0.0 KB compressed</span>
+          <div class="payload-progress-track">
+            <div id="payloadProgressFill" class="payload-progress-fill"></div>
+          </div>
+          <span id="payloadChunkBadge" style="color:var(--accent-cyan); font-weight:600;">1 Cloud Bin</span>
         </div>
 
         <div class="btn-group">
@@ -1092,14 +1920,18 @@ input[type="text"] {
           <button class="btn-purple" onclick="openFullscreenPreview()">🔍 Full Screen Preview</button>
           <button class="btn-cyan" onclick="toggleFullscreenEditor()">⛶ Full Screen Editor</button>
           <button onclick="saveLocal()">💾 Save Local</button>
-          <button onclick="generate()">🚀 Generate Link</button>
+          <button id="mainDeployBtn" onclick="generate()">🚀 Generate Link</button>
           <button class="btn-green" onclick="updateExistingLink()">✏️ Edit Link</button>
         </div>
 
         <div class="preview-wrapper">
           <div class="preview-header-bar">
             <span>Live Render Output</span>
-            <span style="font-size:11px; color:var(--accent-cyan);">⚡ Optimized Engine</span>
+            <div class="preview-header-controls">
+              <button class="toggle-pill" id="autoRunBtn" onclick="toggleAutoRun()">⚡ Auto-Run: OFF</button>
+              <button class="toggle-pill" id="consoleToggleBtn" onclick="toggleConsoleDrawer()">🖥️ Console (0)</button>
+              <span style="font-size:11px; color:var(--accent-cyan);">⚡ Optimized Engine</span>
+            </div>
           </div>
           <div class="studio-preview-container">
             <iframe id="previewFrame"></iframe>
@@ -1107,24 +1939,46 @@ input[type="text"] {
               <a href="https://t.me/mk_bots0" target="_blank">ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍᴋ_ʙᴏᴛs™ | ᴀʟʟ ʀɪɢʜᴛs ʀᴇsᴇʀᴠᴇᴅ ♡</a>
             </div>
           </div>
+
+          <!-- Collapsible Mini JS Console Drawer -->
+          <div id="consoleDrawer" class="console-drawer">
+            <div class="console-drawer-header">
+              <span>🖥️ Preview JS Console</span>
+              <button class="mini-action-btn" onclick="clearConsoleLogs()">Clear</button>
+            </div>
+            <div id="consoleOutput" class="console-output">
+              <div style="color:#64748b; font-size:11px;">No console logs yet. Run your preview to capture console.log / errors.</div>
+            </div>
+          </div>
         </div>
 
         <div id="linkBox"></div>
       </div>
 
-      <!-- Sidebar History Panel (Local Files + Created Links History) -->
+      <!-- Sidebar History Panel (Local Files + Deployed Codes + Backup/Restore) -->
       <div class="sidebar-panel">
         <div>
           <h3>📁 Saved Local Files</h3>
+          <input type="text" id="localSearchInput" class="sidebar-search-input" placeholder="🔍 Search local files..." oninput="loadHistory()">
           <div id="historyList" class="history-list"></div>
         </div>
 
         <div style="border-top: 1px solid rgba(56, 189, 248, 0.2); padding-top: 12px;">
           <h3>
-            <span>🔗 Created Links History</span>
-            <button class="mini-action-btn" onclick="clearLinkHistory()" title="Clear Link History">🗑️</button>
+            <span>🚀 Deployed Codes</span>
+            <button class="mini-action-btn" onclick="clearLinkHistory()" title="Clear Deployed Codes History">🗑️</button>
           </h3>
+          <input type="text" id="linkSearchInput" class="sidebar-search-input" placeholder="🔍 Search deployed codes..." oninput="loadLinkHistory()">
           <div id="linkHistoryList" class="history-list"></div>
+        </div>
+
+        <div class="backup-bar">
+          <div style="font-size:12px; color:#cbd5e1; font-weight:600;">🔐 Studio Backup &amp; Creator Key</div>
+          <div style="font-size:11px; color:var(--text-muted); line-height:1.4;">Export/import your files, deployed versions &amp; creator token.</div>
+          <div class="backup-bar-btns">
+            <button class="btn-cyan" onclick="exportStudioBackup()">📦 Export JSON</button>
+            <button class="btn-secondary" onclick="triggerImportBackup()">📥 Import JSON</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1138,12 +1992,26 @@ input[type="text"] {
     <span style="font-weight:bold; color:var(--accent-cyan);">🌐 Full Screen Preview Suite</span>
     <div class="device-toggles">
       <button class="device-btn active" onclick="setDeviceMode('desktop', this)">💻 Desktop</button>
+      <button class="device-btn" onclick="setDeviceMode('tablet', this)">📲 Tablet</button>
       <button class="device-btn" onclick="setDeviceMode('mobile', this)">📱 Mobile</button>
     </div>
     <button class="btn-secondary" style="background:#dc2626 !important;" onclick="closeFullscreenPreview()">✕ Close</button>
   </div>
   <div id="viewportWrap" class="fullscreen-viewport-wrap">
     <iframe id="fullscreenFrame"></iframe>
+  </div>
+</div>
+
+<!-- Custom Glassmorphic Studio Modal -->
+<div id="studioModalOverlay" class="studio-modal-overlay" onclick="handleModalBackdropClick(event)">
+  <div id="studioModalBox" class="studio-modal" onclick="event.stopPropagation()">
+    <div class="studio-modal-header">
+      <h3 id="studioModalTitle">Studio Action</h3>
+      <button id="studioModalCloseBtn" class="modal-close-x" onclick="closeStudioModal()">✕</button>
+    </div>
+    <div id="studioModalError" class="modal-error-msg"></div>
+    <div id="studioModalBody"></div>
+    <div id="studioModalFooter" class="modal-footer-btns"></div>
   </div>
 </div>
 
@@ -1154,33 +2022,708 @@ input[type="text"] {
 // 🔴 API KEY
 const API_KEY = "$2a$10$8yhV85AJmo2nIR.wx9d2F.I6dTxt5NnpIKdZs9qqKWzB6ZAI9NUhG";
 
+// DIRECT CLOUD SYNC COLLECTION NAME (Shared automatically with private admin.html — ZERO Bin ID copy-paste!)
+const ADMIN_COLLECTION_NAME = "MK_CLOUD_ADMIN_CFG";
+
 // SAFE PAYLOAD CHUNK SIZE FOR JSONBIN (~70KB per chunk so even 10,000+ line apps work seamlessly)
 const CHUNK_LIMIT = 70000;
 
 let cmEditor = null;
 let currentFontSize = 13.5;
 let errorLineWidgets = [];
+let autoRunEnabled = false;
+let autoRunTimer = null;
+let autoSaveTimer = null;
+let payloadMeterTimer = null;
+let popupAdIntervalHandle = null;
+let modalLocked = false;
+let consoleLogCount = 0;
+let consoleErrorCount = 0;
+
+// ACTIVE FAST-EDIT DEPLOYMENT TARGET (When user taps a Deployed Code to edit & push without typing Bin ID)
+let activeEditTarget = null; // { binId, name, versionCount }
+
+// PLAN DEFINITIONS
+const PREMIUM_PLANS = {
+  "1d": { label: "1 Day Pass", ms: 24 * 60 * 60 * 1000 },
+  "1w": { label: "1 Week Pro", ms: 7 * 24 * 60 * 60 * 1000 },
+  "1m": { label: "1 Month VIP", ms: 30 * 24 * 60 * 60 * 1000 },
+  "1y": { label: "1 Year Legend", ms: 365 * 24 * 60 * 60 * 1000 }
+};
+
+// DEFAULT FALLBACK CONFIG (Automatically overridden by Direct Sync from your private admin.html)
+const DEFAULT_CLOUD_CONFIG = {
+  freeDailyLimit: 2,
+  deployAdsRequired: 2,
+  popupIntervalSec: 60,
+  freePingDelayMs: 950,
+  ads: [
+    {
+      id: "ad_default_1",
+      title: "👑 Upgrade to MK Cloud Premium — Unlimited Bandwidth & Fast Ping!",
+      type: "banner",
+      mediaUrl: "",
+      redirectUrl: "https://t.me/mk_bots0",
+      durationSec: 5,
+      active: true
+    },
+    {
+      id: "ad_default_2",
+      title: "📢 Join @MK_BOTS0 on Telegram for Free Tools & Premium Codes",
+      type: "landscape",
+      mediaUrl: "",
+      redirectUrl: "https://t.me/mk_bots0",
+      durationSec: 5,
+      active: true
+    }
+  ],
+  codes: []
+};
+
+let discoveredConfigBinId = "";
+
+// SAFE STORAGE HELPERS (Graceful fallback in restricted WebViews/iframes)
+const memoryStorageFallback = {};
+function safeGetStorage(key) {
+  try {
+    return localStorage.getItem(key);
+  } catch (e) {
+    return memoryStorageFallback[key] !== undefined ? memoryStorageFallback[key] : null;
+  }
+}
+function safeSetStorage(key, val) {
+  try {
+    localStorage.setItem(key, val);
+  } catch (e) {
+    memoryStorageFallback[key] = val;
+  }
+}
+function safeRemoveStorage(key) {
+  try {
+    localStorage.removeItem(key);
+  } catch (e) {
+    delete memoryStorageFallback[key];
+  }
+}
+
+// HTML ESCAPE HELPER
+function escapeHtml(str) {
+  return String(str || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// CLIPBOARD COPY WITH EXEC_COMMAND FALLBACK
+function copyTextToClipboard(text, successMsg = "📋 Copied to clipboard!") {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast(successMsg);
+    }).catch(() => {
+      fallbackCopyText(text, successMsg);
+    });
+  } else {
+    fallbackCopyText(text, successMsg);
+  }
+}
+function fallbackCopyText(text, successMsg) {
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.left = "-9999px";
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    showToast(successMsg);
+  } catch (e) {
+    showToast("⚠️ Could not copy automatically.");
+  }
+}
+
+// ==========================================
+// DIRECT CLOUD CONFIG AUTO-SYNC (NO BIN ID COPY-PASTE!)
+// ==========================================
+function getCloudConfig() {
+  try {
+    const raw = safeGetStorage("mk_cloud_live_config");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return Object.assign({}, DEFAULT_CLOUD_CONFIG, parsed, {
+        ads: Array.isArray(parsed.ads) ? parsed.ads : DEFAULT_CLOUD_CONFIG.ads,
+        codes: Array.isArray(parsed.codes) ? parsed.codes : []
+      });
+    }
+  } catch (e) {}
+  return JSON.parse(JSON.stringify(DEFAULT_CLOUD_CONFIG));
+}
+
+async function discoverAdminConfigBin() {
+  if (discoveredConfigBinId) return discoveredConfigBinId;
+  const cachedBin = safeGetStorage("mk_auto_config_bin_id");
+  if (cachedBin) {
+    discoveredConfigBinId = cachedBin;
+    return cachedBin;
+  }
+  try {
+    const cRes = await fetch("https://api.jsonbin.io/v3/c", {
+      headers: { "X-Master-Key": API_KEY }
+    });
+    if (!cRes.ok) return "";
+    const collections = await cRes.json();
+    if (!Array.isArray(collections)) return "";
+    const targetCol = collections.find(
+      c => c && c.collectionMeta && c.collectionMeta.name === ADMIN_COLLECTION_NAME
+    );
+    if (!targetCol || !targetCol.record) return "";
+
+    const bRes = await fetch(`https://api.jsonbin.io/v3/c/${targetCol.record}/bins`, {
+      headers: { "X-Master-Key": API_KEY }
+    });
+    if (!bRes.ok) return "";
+    const bins = await bRes.json();
+    if (Array.isArray(bins) && bins.length > 0 && bins[0].record) {
+      discoveredConfigBinId = bins[0].record;
+      safeSetStorage("mk_auto_config_bin_id", discoveredConfigBinId);
+      return discoveredConfigBinId;
+    }
+  } catch (e) {}
+  return "";
+}
+
+async function pullDirectCloudConfig() {
+  try {
+    const binId = await discoverAdminConfigBin();
+    if (!binId) return;
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+      headers: { "X-Master-Key": API_KEY }
+    });
+    if (!res.ok) return;
+    const json = await res.json();
+    if (json && json.record && json.record.mkAdminConfig) {
+      safeSetStorage("mk_cloud_live_config", JSON.stringify(json.record.mkAdminConfig));
+      refreshTierAndAdsUI();
+      restartPopupAdTimer();
+    }
+  } catch (e) {}
+}
+
+async function markCloudCodeUsed(updatedCfg) {
+  try {
+    const binId = await discoverAdminConfigBin();
+    if (!binId) return;
+    await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
+      body: JSON.stringify({ mkAdminConfig: updatedCfg, updatedAt: Date.now() })
+    });
+  } catch (e) {}
+}
+
+// PREMIUM SUBSCRIPTION STATE & DAILY DEPLOYMENT QUOTA
+function getPremiumState() {
+  try {
+    const raw = safeGetStorage("mk_premium_state");
+    if (!raw) return null;
+    const st = JSON.parse(raw);
+    if (st && st.expiresAt && Date.now() < st.expiresAt) {
+      return st;
+    }
+  } catch (e) {}
+  return null;
+}
+
+function isPremiumUser() {
+  return Boolean(getPremiumState());
+}
+
+function getTodayDateKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function getDailyDeployCount() {
+  try {
+    const raw = JSON.parse(safeGetStorage("mk_daily_deploys") || "{}");
+    return raw[getTodayDateKey()] || 0;
+  } catch (e) {
+    return 0;
+  }
+}
+
+function incrementDailyDeployCount() {
+  const key = getTodayDateKey();
+  let raw = {};
+  try { raw = JSON.parse(safeGetStorage("mk_daily_deploys") || "{}"); } catch (e) {}
+  raw[key] = (raw[key] || 0) + 1;
+  safeSetStorage("mk_daily_deploys", JSON.stringify(raw));
+  refreshTierAndAdsUI();
+}
+
+function formatRemainingTime(ms) {
+  if (ms <= 0) return "Expired";
+  const mins = Math.floor(ms / 60000);
+  const hrs = Math.floor(mins / 60);
+  const days = Math.floor(hrs / 24);
+  if (days >= 1) return `${days}d ${hrs % 24}h left`;
+  if (hrs >= 1) return `${hrs}h ${mins % 60}m left`;
+  return `${Math.max(1, mins)}m left`;
+}
+
+function refreshTierAndAdsUI() {
+  const prem = getPremiumState();
+  const cfg = getCloudConfig();
+  const used = getDailyDeployCount();
+  const limit = Math.max(1, parseInt(cfg.freeDailyLimit, 10) || 2);
+
+  const landingPill = document.getElementById("landingTierPill");
+  const studioPill = document.getElementById("studioTierPill");
+  const quotaEl = document.getElementById("deployQuotaText");
+  const pingEl = document.getElementById("studioPingPill");
+  const expiryEl = document.getElementById("premiumExpiryText");
+  const landingPingStat = document.getElementById("landingPingStat");
+
+  if (prem) {
+    const label = `👑 ${prem.planLabel || "Premium"}`;
+    if (landingPill) { landingPill.textContent = label; landingPill.classList.add("is-premium"); }
+    if (studioPill) { studioPill.textContent = label; studioPill.classList.add("is-premium"); }
+    if (quotaEl) quotaEl.textContent = "Deployments: ∞ Unlimited (Ad-Free)";
+    if (pingEl) { pingEl.textContent = "⚡ Turbo Edge (~18ms • Unlimited Bandwidth)"; pingEl.classList.add("turbo"); }
+    if (expiryEl) {
+      expiryEl.style.display = "inline";
+      expiryEl.textContent = "⏳ " + formatRemainingTime(prem.expiresAt - Date.now());
+    }
+    if (landingPingStat) landingPingStat.textContent = "~18ms Turbo";
+  } else {
+    if (landingPill) { landingPill.textContent = "🆓 Free Plan"; landingPill.classList.remove("is-premium"); }
+    if (studioPill) { studioPill.textContent = "🆓 Free Plan"; studioPill.classList.remove("is-premium"); }
+    if (quotaEl) quotaEl.textContent = `Deployments Today: ${used} / ${limit}`;
+    if (pingEl) { pingEl.textContent = `🐢 Standard Routing (~${Math.max(120, Math.round((cfg.freePingDelayMs || 950) / 5))}ms)`; pingEl.classList.remove("turbo"); }
+    if (expiryEl) expiryEl.style.display = "none";
+    if (landingPingStat) landingPingStat.textContent = "less than 50ms";
+  }
+
+  renderBannerAdSlot("landingAdSlot");
+  renderBannerAdSlot("studioAdSlot");
+}
+
+// YOUTUBE URL TO EMBED CONVERTER
+function extractYouTubeEmbedUrl(url) {
+  if (!url) return "";
+  try {
+    const u = url.trim();
+    const m1 = u.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/|youtube\.com\/embed\/)([A-Za-z0-9_-]{6,15})/);
+    if (!m1 || !m1[1]) return "";
+    return `https://www.youtube.com/embed/${m1[1]}?autoplay=1&rel=0`;
+  } catch (e) {
+    return "";
+  }
+}
+
+function getActiveAds(filterTypes = null) {
+  const cfg = getCloudConfig();
+  let ads = (cfg.ads || []).filter(a => a && a.active !== false);
+  if (filterTypes && filterTypes.length) {
+    const filtered = ads.filter(a => filterTypes.includes(a.type));
+    if (filtered.length) return filtered;
+  }
+  return ads;
+}
+
+function pickRandomAd(filterTypes = null) {
+  const pool = getActiveAds(filterTypes);
+  if (!pool.length) return null;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function renderBannerAdSlot(slotId) {
+  const el = document.getElementById(slotId);
+  if (!el) return;
+  if (isPremiumUser()) {
+    el.classList.remove("visible");
+    el.innerHTML = "";
+    return;
+  }
+  const ad = pickRandomAd(["banner", "landscape", "portrait"]);
+  if (!ad) {
+    el.classList.remove("visible");
+    return;
+  }
+  el.classList.add("visible");
+  const safeHref = escapeHtml(ad.redirectUrl || "https://t.me/mk_bots0");
+  const safeTitle = escapeHtml(ad.title || "Sponsored Advertisement");
+  if (ad.mediaUrl && ad.type !== "youtube") {
+    el.innerHTML = `
+      <div style="width:100%; display:flex; justify-content:space-between; align-items:center;">
+        <span class="ad-banner-tag">Sponsored Ad</span>
+        <button class="mini-action-btn" onclick="openPremiumModal()" style="font-size:10px;">👑 Remove Ads</button>
+      </div>
+      <a class="ad-banner-link" href="${safeHref}" target="_blank" rel="noopener noreferrer">
+        <img src="${escapeHtml(ad.mediaUrl)}" alt="${safeTitle}">
+        <span style="font-size:12px; color:#cbd5e1;">${safeTitle} ↗</span>
+      </a>
+    `;
+  } else {
+    el.innerHTML = `
+      <div class="ad-banner-fallback">
+        <div>
+          <span class="ad-banner-tag" style="margin-bottom:4px; display:inline-block;">Sponsored Ad</span>
+          <div style="font-size:13.5px; font-weight:700; color:#f8fafc; margin-top:4px;">${safeTitle}</div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <a href="${safeHref}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;"><button class="btn-cyan" style="padding:7px 14px;" type="button">Visit Link ↗</button></a>
+          <button class="btn-gold" style="padding:7px 14px;" onclick="openPremiumModal()">👑 Go Ad-Free</button>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function buildAdMediaHtml(ad) {
+  const safeTitle = escapeHtml(ad.title || "Sponsored Advertisement");
+  const safeHref = escapeHtml(ad.redirectUrl || "https://t.me/mk_bots0");
+  if (ad.type === "youtube") {
+    const embedUrl = extractYouTubeEmbedUrl(ad.mediaUrl);
+    if (embedUrl) {
+      return `
+        <div class="ad-media-stage">
+          <div class="ad-video-wrap">
+            <iframe src="${escapeHtml(embedUrl)}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <div style="font-size:13px; font-weight:700; color:#f8fafc; text-align:center;">${safeTitle}</div>
+          <a href="${safeHref}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
+            <button class="btn-cyan" type="button">🔗 Open Sponsor Link ↗</button>
+          </a>
+        </div>
+      `;
+    }
+  }
+  if (ad.mediaUrl) {
+    const cls = ad.type === "portrait" ? "ad-img-portrait" : ad.type === "banner" ? "ad-img-banner" : "ad-img-landscape";
+    return `
+      <div class="ad-media-stage">
+        <a href="${safeHref}" target="_blank" rel="noopener noreferrer" style="display:flex; justify-content:center; width:100%;">
+          <img class="${cls}" src="${escapeHtml(ad.mediaUrl)}" alt="${safeTitle}">
+        </a>
+        <div style="font-size:13px; font-weight:700; color:#f8fafc; text-align:center;">${safeTitle}</div>
+        <a href="${safeHref}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
+          <button class="btn-cyan" type="button">🔗 Visit Sponsor ↗</button>
+        </a>
+      </div>
+    `;
+  }
+  return `
+    <div class="ad-media-stage" style="padding:20px; text-align:center;">
+      <div style="font-size:28px;">🚀</div>
+      <div style="font-size:15px; font-weight:800; color:#fde68a;">${safeTitle}</div>
+      <p style="font-size:12.5px; color:#94a3b8; line-height:1.5;">Upgrade to MK Cloud Premium for unlimited bandwidth, boosted fast ping, zero pop-ups, and unlimited daily deployments!</p>
+      <a href="${safeHref}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
+        <button class="btn-cyan" type="button">🔗 Learn More ↗</button>
+      </a>
+    </div>
+  `;
+}
+
+// AUTOMATIC 1-MINUTE POP-UP AD ENGINE (Free Users Only)
+function restartPopupAdTimer() {
+  if (popupAdIntervalHandle) {
+    clearInterval(popupAdIntervalHandle);
+    popupAdIntervalHandle = null;
+  }
+  const params = new URLSearchParams(location.search);
+  if (params.get("id") || isPremiumUser()) return;
+
+  const cfg = getCloudConfig();
+  const intervalMs = Math.max(15, parseInt(cfg.popupIntervalSec, 10) || 60) * 1000;
+
+  popupAdIntervalHandle = setInterval(() => {
+    if (isPremiumUser()) {
+      restartPopupAdTimer();
+      return;
+    }
+    const overlay = document.getElementById("studioModalOverlay");
+    if (overlay && overlay.classList.contains("open")) return;
+    const ad = pickRandomAd();
+    if (!ad) return;
+    showPopupAdModal(ad);
+  }, intervalMs);
+}
+
+function showPopupAdModal(ad) {
+  let secs = Math.max(3, Math.min(20, parseInt(ad.durationSec, 10) || 5));
+  openStudioModal({
+    title: "📢 Sponsored Advertisement",
+    locked: true,
+    bodyHtml: `
+      ${buildAdMediaHtml(ad)}
+      <div style="font-size:11.5px; color:var(--text-muted); text-align:center;">
+        Free users see periodic ads. <a href="javascript:void(0)" onclick="forceCloseAndOpenPremium()" style="color:#fbbf24; font-weight:700;">Go Premium for 100% Ad-Free 👑</a>
+      </div>
+    `,
+    footerHtml: `
+      <button id="popupAdCloseBtn" class="btn-secondary" disabled onclick="closeStudioModal(true)">Skip in ${secs}s</button>
+    `
+  });
+  clearInterval(window._adCountdownTimer);
+  window._adCountdownTimer = setInterval(() => {
+    secs--;
+    const btn = document.getElementById("popupAdCloseBtn");
+    if (!btn) { clearInterval(window._adCountdownTimer); return; }
+    if (secs <= 0) {
+      clearInterval(window._adCountdownTimer);
+      btn.disabled = false;
+      btn.textContent = "✕ Close Ad";
+      modalLocked = false;
+    } else {
+      btn.textContent = `Skip in ${secs}s`;
+    }
+  }, 1000);
+}
+
+function forceCloseAndOpenPremium() {
+  clearInterval(window._adCountdownTimer);
+  closeStudioModal(true);
+  openPremiumModal();
+}
+
+// PRE-DEPLOY REWARDED AD SEQUENCE (2-3 Ads for Free Users)
+function runPreDeployAdGate(onComplete) {
+  if (isPremiumUser()) {
+    onComplete();
+    return;
+  }
+  const cfg = getCloudConfig();
+  const totalAds = Math.max(1, Math.min(5, parseInt(cfg.deployAdsRequired, 10) || 2));
+  const pool = getActiveAds();
+  if (!pool.length) {
+    onComplete();
+    return;
+  }
+
+  let currentStep = 0;
+
+  function showNextRewardAd() {
+    if (currentStep >= totalAds) {
+      closeStudioModal(true);
+      onComplete();
+      return;
+    }
+    const ad = pool[Math.floor(Math.random() * pool.length)];
+    let secs = Math.max(3, Math.min(30, parseInt(ad.durationSec, 10) || 5));
+    const stepNum = currentStep + 1;
+
+    openStudioModal({
+      title: `🎬 Deploy Sponsor Ad (${stepNum} of ${totalAds})`,
+      locked: true,
+      bodyHtml: `
+        <p style="font-size:12px; color:#fde68a; margin-bottom:10px;">Watch ${totalAds} short sponsor ads to unlock this free deployment — or upgrade to Premium for instant ad-free deploys.</p>
+        ${buildAdMediaHtml(ad)}
+      `,
+      footerHtml: `
+        <button class="btn-gold" onclick="forceCloseAndOpenPremium()">👑 Skip All (Premium)</button>
+        <button id="rewardAdNextBtn" class="btn-green" disabled onclick="window._advanceRewardAd()">Wait ${secs}s...</button>
+      `
+    });
+
+    window._advanceRewardAd = function() {
+      currentStep++;
+      showNextRewardAd();
+    };
+
+    clearInterval(window._adCountdownTimer);
+    window._adCountdownTimer = setInterval(() => {
+      secs--;
+      const btn = document.getElementById("rewardAdNextBtn");
+      if (!btn) { clearInterval(window._adCountdownTimer); return; }
+      if (secs <= 0) {
+        clearInterval(window._adCountdownTimer);
+        btn.disabled = false;
+        btn.textContent = stepNum < totalAds ? `Next Ad (${stepNum + 1}/${totalAds}) →` : "🚀 Continue to Deploy";
+      } else {
+        btn.textContent = `Wait ${secs}s...`;
+      }
+    }, 1000);
+  }
+
+  showNextRewardAd();
+}
+
+// CUSTOM STUDIO MODAL ENGINE
+function openStudioModal({ title, bodyHtml, footerHtml, wide = false, locked = false }) {
+  modalLocked = Boolean(locked);
+  const box = document.getElementById("studioModalBox");
+  box.classList.toggle("wide", Boolean(wide));
+  document.getElementById("studioModalCloseBtn").style.display = modalLocked ? "none" : "inline-flex";
+  document.getElementById("studioModalTitle").textContent = title;
+  document.getElementById("studioModalBody").innerHTML = bodyHtml;
+  document.getElementById("studioModalFooter").innerHTML = footerHtml;
+  const errEl = document.getElementById("studioModalError");
+  errEl.style.display = "none";
+  errEl.textContent = "";
+  document.getElementById("studioModalOverlay").classList.add("open");
+}
+
+function showModalError(msg) {
+  const errEl = document.getElementById("studioModalError");
+  errEl.textContent = msg;
+  errEl.style.display = "block";
+}
+
+function closeStudioModal(force = false) {
+  if (modalLocked && !force) return;
+  modalLocked = false;
+  clearInterval(window._adCountdownTimer);
+  document.getElementById("studioModalOverlay").classList.remove("open");
+}
+
+function handleModalBackdropClick(e) {
+  if (modalLocked) return;
+  if (e.target && e.target.id === "studioModalOverlay") {
+    closeStudioModal();
+  }
+}
+
+function showConfirmModal(title, message, onConfirm, confirmLabel = "Confirm", isDanger = false) {
+  window._pendingConfirmAction = onConfirm;
+  openStudioModal({
+    title,
+    bodyHtml: `<p style="color:#cbd5e1; font-size:13.5px; line-height:1.55;">${escapeHtml(message)}</p>`,
+    footerHtml: `
+      <button class="btn-secondary" onclick="closeStudioModal()">Cancel</button>
+      <button class="${isDanger ? 'btn-danger' : ''}" onclick="executePendingConfirm()">${escapeHtml(confirmLabel)}</button>
+    `
+  });
+}
+
+function executePendingConfirm() {
+  const fn = window._pendingConfirmAction;
+  window._pendingConfirmAction = null;
+  closeStudioModal();
+  if (typeof fn === "function") fn();
+}
+
+// PREMIUM MODAL & ONE-TIME CODE REDEMPTION (SYNCED DIRECTLY WITH PRIVATE ADMIN.HTML)
+function openPremiumModal(highlightPlan = "1m") {
+  const prem = getPremiumState();
+  const statusBanner = prem
+    ? `<div style="background:rgba(22,163,74,0.2); border:1px solid #4ade80; border-radius:10px; padding:10px 12px; margin-bottom:14px; font-size:12.5px; color:#86efac;">
+        👑 <strong>Active Plan:</strong> ${escapeHtml(prem.planLabel)} (${formatRemainingTime(prem.expiresAt - Date.now())})
+       </div>`
+    : `<div style="background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.4); border-radius:10px; padding:10px 12px; margin-bottom:14px; font-size:12.5px; color:#fde68a;">
+        Unlock <strong>Ad-Free Studio</strong>, <strong>Unlimited Daily Deployments</strong>, <strong>Boosted Fast Ping</strong>, <strong>Passcode Viewer Locks</strong>, <strong>Code Diff</strong> &amp; <strong>Pro IDE Themes</strong>.
+       </div>`;
+
+  openStudioModal({
+    title: "👑 MK Cloud Premium & Code Redemption",
+    wide: true,
+    bodyHtml: `
+      ${statusBanner}
+      <div class="plans-grid" style="margin-top:0; margin-bottom:16px;">
+        <div class="plan-card ${highlightPlan === '1d' ? 'popular' : ''}">
+          <div class="plan-duration">⚡ 1 Day</div>
+          <div style="font-size:11.5px; color:var(--text-muted);">24h Ad-Free + Unlimited Deploys + Fast Ping</div>
+        </div>
+        <div class="plan-card ${highlightPlan === '1w' ? 'popular' : ''}">
+          <div class="plan-duration">🔥 1 Week</div>
+          <div style="font-size:11.5px; color:var(--text-muted);">7d Full Pro Access + All Themes &amp; Diff</div>
+        </div>
+        <div class="plan-card ${highlightPlan === '1m' ? 'popular' : ''}">
+          <div class="plan-duration">👑 1 Month</div>
+          <div style="font-size:11.5px; color:var(--text-muted);">30d VIP Bandwidth Boost + Zero Ads</div>
+        </div>
+        <div class="plan-card ${highlightPlan === '1y' ? 'popular' : ''}">
+          <div class="plan-duration">💎 1 Year</div>
+          <div style="font-size:11.5px; color:var(--text-muted);">365d Legend Tier + Priority Engine</div>
+        </div>
+      </div>
+
+      <div style="background:rgba(2,6,23,0.75); border:1px solid var(--border-color); border-radius:12px; padding:14px;">
+        <div class="modal-field" style="margin-bottom:8px;">
+          <label for="redeemCodeInput">🎟️ Have a One-Time Premium Code?</label>
+          <input type="text" id="redeemCodeInput" placeholder="Enter code e.g. MK-1M-XXXXXX" style="text-transform:uppercase;">
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <a href="https://t.me/mk_bots0" target="_blank" style="color:var(--accent-cyan); font-size:12px; text-decoration:none;">💬 Get a Premium Code on Telegram (@MK_BOTS0) ↗</a>
+          <button class="btn-gold" onclick="redeemPremiumCode()">✨ Redeem Code</button>
+        </div>
+      </div>
+    `,
+    footerHtml: `<button class="btn-secondary" onclick="closeStudioModal()">Close</button>`
+  });
+}
+
+async function redeemPremiumCode() {
+  const inp = document.getElementById("redeemCodeInput");
+  const codeStr = (inp ? inp.value : "").trim().toUpperCase();
+  if (!codeStr) {
+    showModalError("Please enter a premium code.");
+    return;
+  }
+
+  showToast("⏳ Verifying one-time code with Cloud...");
+  await pullDirectCloudConfig();
+
+  const cfg = getCloudConfig();
+  const idx = (cfg.codes || []).findIndex(c => c.code && c.code.toUpperCase() === codeStr);
+  if (idx === -1) {
+    showModalError("❌ Invalid premium code. Check spelling or contact @MK_BOTS0.");
+    return;
+  }
+  const entry = cfg.codes[idx];
+  if (entry.used) {
+    showModalError("⛔ This one-time code has already been redeemed!");
+    return;
+  }
+
+  const plan = PREMIUM_PLANS[entry.planKey] || PREMIUM_PLANS["1m"];
+  const now = Date.now();
+  const existing = getPremiumState();
+  const baseTime = existing && existing.expiresAt > now ? existing.expiresAt : now;
+
+  // Mark one-time code as USED locally & push directly to Cloud so it can never be reused
+  cfg.codes[idx].used = true;
+  cfg.codes[idx].usedAt = new Date().toLocaleString();
+  cfg.codes[idx].usedBy = getCreatorToken();
+  safeSetStorage("mk_cloud_live_config", JSON.stringify(cfg));
+  await markCloudCodeUsed(cfg);
+
+  safeSetStorage("mk_premium_state", JSON.stringify({
+    planKey: entry.planKey,
+    planLabel: plan.label,
+    code: codeStr,
+    activatedAt: now,
+    expiresAt: baseTime + plan.ms
+  }));
+
+  closeStudioModal();
+  refreshTierAndAdsUI();
+  restartPopupAdTimer();
+  showToast(`👑 ${plan.label} activated! Ad-Free & Turbo Ping unlocked.`);
+}
 
 // UNIQUE CREATOR TOKEN (Ensures only User A who created a link can edit that link)
 function getCreatorToken() {
-  let token = localStorage.getItem("mk_creator_uid");
+  let token = safeGetStorage("mk_creator_uid");
   if (!token) {
     token = "mk_uid_" + Date.now().toString(36) + "_" + Math.random().toString(36).substring(2, 12);
-    localStorage.setItem("mk_creator_uid", token);
+    safeSetStorage("mk_creator_uid", token);
   }
   return token;
 }
-// Initialize token right away
 getCreatorToken();
 
 // INITIALIZE CODEMIRROR REAL HTML IDE
 function initCodeEditor() {
   if (cmEditor) return;
   const textarea = document.getElementById("code");
+  const savedTheme = isPremiumUser() ? (safeGetStorage("mk_editor_theme") || "material-ocean") : "material-ocean";
 
   cmEditor = CodeMirror.fromTextArea(textarea, {
     mode: "htmlmixed",
-    theme: "material-ocean",
+    theme: savedTheme,
     lineNumbers: true,
     lineWrapping: true,
     autoCloseTags: true,
@@ -1204,7 +2747,9 @@ function initCodeEditor() {
     }
   });
 
-  // Trigger tag & attribute autocomplete automatically as user types
+  const themeSel = document.getElementById("themeSelector");
+  if (themeSel) themeSel.value = savedTheme;
+
   cmEditor.on("inputRead", function(cm, change) {
     if (change.origin !== "+input") return;
     const ch = change.text[0];
@@ -1222,10 +2767,101 @@ function initCodeEditor() {
 
   cmEditor.on("change", function() {
     updateStats();
+    scheduleAutoSaveDraft();
+    schedulePayloadMeterUpdate();
     if (document.getElementById("editorBox").classList.contains("split-live")) {
-      document.getElementById("fsSplitFrame").srcdoc = injectViewport(cmEditor.getValue());
+      document.getElementById("fsSplitFrame").srcdoc = injectViewport(cmEditor.getValue(), true);
+    }
+    if (autoRunEnabled) {
+      clearTimeout(autoRunTimer);
+      autoRunTimer = setTimeout(() => {
+        preview(true);
+      }, 450);
     }
   });
+}
+
+// PRO THEME SWITCHER
+function changeEditorTheme(selectEl) {
+  const theme = selectEl.value;
+  if (theme !== "material-ocean" && !isPremiumUser()) {
+    selectEl.value = "material-ocean";
+    showToast("👑 Pro IDE Themes require MK Cloud Premium!");
+    openPremiumModal("1w");
+    return;
+  }
+  if (cmEditor) {
+    cmEditor.setOption("theme", theme);
+    safeSetStorage("mk_editor_theme", theme);
+    showToast(`🎨 IDE Theme switched to ${theme}`);
+  }
+}
+
+// UI SNIPPET LIBRARY
+const uiBlockSnippets = {
+  navbar: `<nav style="display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:#0f172a;border-bottom:1px solid #1e293b;color:#f8fafc;">\n  <strong style="color:#38bdf8;">MyBrand</strong>\n  <div style="display:flex;gap:14px;font-size:14px;">\n    <a href="#home" style="color:#cbd5e1;text-decoration:none;">Home</a>\n    <a href="#about" style="color:#cbd5e1;text-decoration:none;">About</a>\n  </div>\n</nav>\n`,
+  glassCard: `<div style="max-width:360px;margin:20px auto;padding:22px;border-radius:16px;background:rgba(15,23,42,0.8);border:1px solid rgba(56,189,248,0.35);color:#f8fafc;backdrop-filter:blur(12px);">\n  <h3 style="color:#38bdf8;margin-bottom:8px;">Glass Card</h3>\n  <p style="color:#94a3b8;font-size:14px;">Modern dark card with neon cyan accents.</p>\n</div>\n`,
+  darkModal: `<div id="myModal" style="position:fixed;inset:0;background:rgba(2,6,23,0.8);display:flex;align-items:center;justify-content:center;">\n  <div style="background:#0f172a;border:1px solid #38bdf8;border-radius:14px;padding:22px;max-width:340px;color:#fff;">\n    <h3 style="color:#38bdf8;margin-bottom:8px;">Modal Title</h3>\n    <p style="color:#94a3b8;font-size:13px;margin-bottom:14px;">Your message goes here.</p>\n    <button onclick="document.getElementById('myModal').remove()" style="padding:8px 16px;background:#2563eb;color:#fff;border:none;border-radius:8px;cursor:pointer;">Close</button>\n  </div>\n</div>\n`,
+  fetchTemplate: `<script>\nasync function loadData(url) {\n  try {\n    const res = await fetch(url);\n    const data = await res.json();\n    console.log("Loaded:", data);\n  } catch (err) {\n    console.error("Fetch error:", err);\n  }\n}\n<\/script>\n`,
+  heroBanner: `<section style="text-align:center;padding:60px 20px;background:linear-gradient(135deg,#020617,#0f172a);color:#fff;">\n  <h1 style="font-size:36px;color:#38bdf8;margin-bottom:12px;">Build Faster in the Cloud</h1>\n  <p style="color:#94a3b8;max-width:520px;margin:0 auto 20px;">Launch responsive single-file web apps in seconds.</p>\n  <button style="padding:12px 26px;border:none;border-radius:999px;background:#2563eb;color:#fff;font-weight:700;cursor:pointer;">Get Started</button>\n</section>\n`
+};
+
+function insertUiBlock(selectEl) {
+  const key = selectEl.value;
+  if (key && uiBlockSnippets[key] && cmEditor) {
+    cmEditor.replaceSelection(uiBlockSnippets[key]);
+    cmEditor.focus();
+    showToast(`🧩 Inserted ${key} snippet!`);
+  }
+  selectEl.value = "";
+}
+
+// PAYLOAD SIZE & CHUNK ESTIMATOR
+function schedulePayloadMeterUpdate() {
+  clearTimeout(payloadMeterTimer);
+  payloadMeterTimer = setTimeout(updatePayloadMeter, 280);
+}
+
+function updatePayloadMeter() {
+  const code = getEditorCode();
+  const rawBytes = new Blob([code]).size;
+  const compressed = (typeof LZString !== "undefined" && LZString.compressToEncodedURIComponent)
+    ? LZString.compressToEncodedURIComponent(code)
+    : code;
+  const compLen = compressed.length;
+  const chunks = Math.max(1, Math.ceil(compLen / CHUNK_LIMIT));
+  const pct = Math.min(100, Math.round((compLen / CHUNK_LIMIT) * 100));
+
+  const labelEl = document.getElementById("payloadSizeLabel");
+  const fillEl = document.getElementById("payloadProgressFill");
+  const chunkEl = document.getElementById("payloadChunkBadge");
+
+  if (labelEl) {
+    labelEl.textContent = `📦 Payload: ${(rawBytes / 1024).toFixed(1)} KB raw → ${(compLen / 1024).toFixed(1)} KB compressed`;
+  }
+  if (fillEl) {
+    fillEl.style.width = `${pct}%`;
+    fillEl.classList.toggle("multi-bin", chunks > 1);
+  }
+  if (chunkEl) {
+    chunkEl.textContent = chunks === 1 ? "1 Cloud Bin" : `${chunks} Auto-Chunked Bins`;
+    chunkEl.style.color = chunks === 1 ? "var(--accent-cyan)" : "#fbbf24";
+  }
+}
+
+// AUTO-SAVE DRAFT RECOVERY
+function scheduleAutoSaveDraft() {
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(() => {
+    const code = getEditorCode();
+    safeSetStorage("mk_autosave_draft", code);
+    const el = document.getElementById("draftStatus");
+    if (el) {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      el.textContent = code.trim() ? `💾 Draft saved ${timeStr}` : "";
+    }
+  }, 600);
 }
 
 // CUSTOM HTML LINTER + RED ERROR LINE HIGHLIGHTER
@@ -1264,7 +2900,6 @@ function customHtmlLinter(text) {
 function updateErrorUI(annotations) {
   if (!cmEditor) return;
 
-  // Clear previous red line highlights
   errorLineWidgets.forEach(lineHandle => {
     cmEditor.removeLineClass(lineHandle, "background", "cm-error-line-bg");
   });
@@ -1302,6 +2937,60 @@ function setEditorCode(val) {
   } else {
     document.getElementById("code").value = val;
   }
+  schedulePayloadMeterUpdate();
+}
+
+// IMPORT, EXPORT & ONE-TAP COPY CODE
+function triggerImportFile() {
+  const input = document.getElementById("htmlFileInput");
+  if (input) {
+    input.value = "";
+    input.click();
+  }
+}
+
+function handleImportFile(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const content = e.target.result || "";
+    setEditorCode(content);
+    preview();
+    updateStats();
+    showToast(`📂 Imported '${file.name}'`);
+  };
+  reader.onerror = function() {
+    showToast("❌ Failed to read file.");
+  };
+  reader.readAsText(file);
+}
+
+function exportHtmlFile() {
+  const code = getEditorCode();
+  if (!code.trim()) {
+    showToast("⚠️ Editor is empty!");
+    return;
+  }
+  const blob = new Blob([code], { type: "text/html;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "mk-cloud-project.html";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToast("⬇️ Exported mk-cloud-project.html");
+}
+
+function copyEditorCode() {
+  const code = getEditorCode();
+  if (!code.trim()) {
+    showToast("⚠️ Editor is empty!");
+    return;
+  }
+  copyTextToClipboard(code, "📋 Full code copied to clipboard!");
 }
 
 // TRUE FULLSCREEN CODE EDITOR MODE & TOP PRO TOOLBAR ACTIONS
@@ -1314,7 +3003,6 @@ function toggleFullscreenEditor() {
     document.body.classList.add("fs-editor-active");
     document.getElementById("fsEditorBtn").innerText = "✕ Exit Full Screen";
 
-    // Request True Browser Fullscreen API for 100% Native Full Screen
     if (box.requestFullscreen) {
       box.requestFullscreen().catch(() => {});
     } else if (box.webkitRequestFullscreen) {
@@ -1342,7 +3030,6 @@ function toggleFullscreenEditor() {
   }
 }
 
-// Sync state if user exits native fullscreen via hardware Back/Esc button
 document.addEventListener("fullscreenchange", () => {
   const box = document.getElementById("editorBox");
   if (!document.fullscreenElement && box && box.classList.contains("fullscreen-code-mode")) {
@@ -1357,7 +3044,7 @@ function toggleSplitLive() {
   const box = document.getElementById("editorBox");
   box.classList.toggle("split-live");
   if (box.classList.contains("split-live")) {
-    document.getElementById("fsSplitFrame").srcdoc = injectViewport(getEditorCode());
+    document.getElementById("fsSplitFrame").srcdoc = injectViewport(getEditorCode(), true);
   }
   if (cmEditor) setTimeout(() => cmEditor.refresh(), 50);
 }
@@ -1507,11 +3194,21 @@ function openStudio(){
   initCodeEditor();
   loadHistory();
   loadLinkHistory();
+  refreshTierAndAdsUI();
   if(!getEditorCode()) {
-    loadTemplate({value: "basic"});
+    const savedDraft = safeGetStorage("mk_autosave_draft");
+    if (savedDraft && savedDraft.trim()) {
+      setEditorCode(savedDraft);
+      preview(true);
+      updateStats();
+      showToast("♻️ Restored your auto-saved draft!");
+    } else {
+      loadTemplate({value: "basic"});
+    }
   } else {
     setTimeout(() => cmEditor.refresh(), 30);
   }
+  updatePayloadMeter();
 }
 
 function returnToLanding(){
@@ -1521,6 +3218,7 @@ function returnToLanding(){
   }
   document.getElementById("appView").style.display = "none";
   document.getElementById("landingView").style.display = "block";
+  refreshTierAndAdsUI();
 }
 
 // TEMPLATES
@@ -1542,11 +3240,13 @@ function loadTemplate(select) {
 }
 
 function clearEditor() {
-  if(confirm("Clear editor code?")) {
+  showConfirmModal("Clear Editor", "Clear all code from the editor? (Your saved local files and deployed codes remain safe.)", () => {
     setEditorCode("");
-    preview();
+    safeRemoveStorage("mk_autosave_draft");
+    preview(true);
     updateStats();
-  }
+    showToast("🧹 Editor cleared.");
+  }, "Clear Code", true);
 }
 
 function updateStats() {
@@ -1555,35 +3255,107 @@ function updateStats() {
   document.getElementById("lineCount").innerText = "Lines: " + val.split("\n").length.toLocaleString();
 }
 
-// VIEWPORT INJECTION
-function injectViewport(html) {
-  if (!/<meta\s+name=["']viewport["']/i.test(html)) {
-    if (/<head>/i.test(html)) {
-      return html.replace(/<head>/i, '<head>\n<meta name="viewport" content="width=device-width, initial-scale=1.0">');
-    } else if (/<html>/i.test(html)) {
-      return html.replace(/<html>/i, '<html>\n<head>\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n</head>');
+// AUTO-RUN & BUILT-IN MINI JS CONSOLE
+function toggleAutoRun() {
+  autoRunEnabled = !autoRunEnabled;
+  const btn = document.getElementById("autoRunBtn");
+  btn.textContent = autoRunEnabled ? "⚡ Auto-Run: ON" : "⚡ Auto-Run: OFF";
+  btn.classList.toggle("active", autoRunEnabled);
+  if (autoRunEnabled) {
+    preview(true);
+    showToast("⚡ Auto-Run enabled!");
+  } else {
+    showToast("Auto-Run paused.");
+  }
+}
+
+function toggleConsoleDrawer() {
+  const drawer = document.getElementById("consoleDrawer");
+  drawer.classList.toggle("open");
+}
+
+function clearConsoleLogs() {
+  consoleLogCount = 0;
+  consoleErrorCount = 0;
+  const out = document.getElementById("consoleOutput");
+  out.innerHTML = `<div style="color:#64748b; font-size:11px;">Console cleared.</div>`;
+  updateConsoleBadge();
+}
+
+function updateConsoleBadge() {
+  const btn = document.getElementById("consoleToggleBtn");
+  if (!btn) return;
+  btn.textContent = `🖥️ Console (${consoleLogCount})`;
+  btn.classList.toggle("has-err", consoleErrorCount > 0);
+}
+
+window.addEventListener("message", (event) => {
+  if (!event.data || event.data.type !== "mk_console") return;
+  const out = document.getElementById("consoleOutput");
+  if (!out) return;
+  if (consoleLogCount === 0) out.innerHTML = "";
+  consoleLogCount++;
+  const level = event.data.level || "log";
+  if (level === "error") consoleErrorCount++;
+  const line = document.createElement("div");
+  line.className = "console-line " + (level === "warn" ? "warn" : level === "error" ? "error" : "");
+  const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  const prefix = level === "error" ? "❌" : level === "warn" ? "⚠️" : "›";
+  line.textContent = `[${time}] ${prefix} ${event.data.text}`;
+  out.appendChild(line);
+  out.scrollTop = out.scrollHeight;
+  updateConsoleBadge();
+});
+
+// VIEWPORT & OPTIONAL STUDIO CONSOLE BRIDGE INJECTION
+function injectViewport(html, enableConsoleBridge = false) {
+  let out = html || "";
+  if (!/<meta\s+name=["']viewport["']/i.test(out)) {
+    if (/<head>/i.test(out)) {
+      out = out.replace(/<head>/i, '<head>\n<meta name="viewport" content="width=device-width, initial-scale=1.0">');
+    } else if (/<html>/i.test(out)) {
+      out = out.replace(/<html>/i, '<html>\n<head>\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n</head>');
     } else {
-      return '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' + html;
+      out = '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' + out;
     }
   }
-  return html;
+
+  if (enableConsoleBridge) {
+    const bridgeScript = `<script>(function(){
+      function fmt(a){return Array.from(a).map(function(x){try{return typeof x==='object'&&x!==null?JSON.stringify(x):String(x);}catch(e){return String(x);}}).join(' ');}
+      function send(lvl,txt){try{window.parent.postMessage({type:'mk_console',level:lvl,text:txt},'*');}catch(e){}}
+      ['log','warn','error'].forEach(function(k){
+        var orig=console[k];
+        console[k]=function(){send(k,fmt(arguments));if(orig)orig.apply(console,arguments);};
+      });
+      window.addEventListener('error',function(e){send('error',(e.message||'Script Error')+(e.lineno?' (line '+e.lineno+')':''));});
+      window.addEventListener('unhandledrejection',function(e){send('error','Unhandled Promise: '+(e.reason&&e.reason.message?e.reason.message:String(e.reason)));});
+    })();<\/script>`;
+    if (/<head[^>]*>/i.test(out)) {
+      out = out.replace(/<head[^>]*>/i, (m) => m + "\n" + bridgeScript);
+    } else {
+      out = bridgeScript + "\n" + out;
+    }
+  }
+  return out;
 }
 
 // PREVIEW
-function preview(){
+function preview(silent = false){
   let code = getEditorCode();
-  document.getElementById("previewFrame").srcdoc = injectViewport(code);
+  clearConsoleLogs();
+  document.getElementById("previewFrame").srcdoc = injectViewport(code, true);
   if (document.getElementById("editorBox").classList.contains("split-live")) {
-    document.getElementById("fsSplitFrame").srcdoc = injectViewport(code);
+    document.getElementById("fsSplitFrame").srcdoc = injectViewport(code, true);
   }
-  showToast("⚡ Preview updated!");
+  if (!silent) showToast("⚡ Preview updated!");
 }
 
 // FULL SCREEN PREVIEW MODAL
 function openFullscreenPreview(){
   let code = getEditorCode();
   if(!code) { showToast("⚠️ Editor is empty!"); return; }
-  document.getElementById("fullscreenFrame").srcdoc = injectViewport(code);
+  document.getElementById("fullscreenFrame").srcdoc = injectViewport(code, false);
   document.getElementById("fullscreenOverlay").style.display = "flex";
 }
 
@@ -1596,90 +3368,392 @@ function setDeviceMode(mode, btn) {
   document.querySelectorAll(".device-btn").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
   let wrap = document.getElementById("viewportWrap");
+  wrap.classList.remove("mobile", "tablet");
   if(mode === 'mobile') {
     wrap.classList.add("mobile");
-  } else {
-    wrap.classList.remove("mobile");
+  } else if (mode === 'tablet') {
+    wrap.classList.add("tablet");
   }
 }
 
-// SAVE LOCAL FILES
+// PINNED FAVORITES HELPERS
+function getPinnedLocalFiles() {
+  try { return JSON.parse(safeGetStorage("mk_pinned_files") || "[]"); } catch (e) { return []; }
+}
+function togglePinLocalFile(name, event) {
+  if (event) event.stopPropagation();
+  let pins = getPinnedLocalFiles();
+  const idx = pins.indexOf(name);
+  if (idx !== -1) pins.splice(idx, 1);
+  else pins.unshift(name);
+  safeSetStorage("mk_pinned_files", JSON.stringify(pins));
+  loadHistory();
+}
+
+// SAVE LOCAL FILES (Custom Dark Modal + Search + Pin + Per-File Delete)
 function saveLocal(){
-  let name = prompt("Enter local file name:");
-  if(!name) return;
-  let files = JSON.parse(localStorage.getItem("mk_files") || "{}");
+  openStudioModal({
+    title: "💾 Save Local File",
+    bodyHtml: `
+      <div class="modal-field">
+        <label for="localFileNameInput">Project / File Name</label>
+        <input type="text" id="localFileNameInput" placeholder="e.g. my-landing-page">
+      </div>
+    `,
+    footerHtml: `
+      <button class="btn-secondary" onclick="closeStudioModal()">Cancel</button>
+      <button onclick="confirmSaveLocal()">💾 Save File</button>
+    `
+  });
+  setTimeout(() => {
+    const inp = document.getElementById("localFileNameInput");
+    if (inp) inp.focus();
+  }, 50);
+}
+
+function confirmSaveLocal() {
+  const inp = document.getElementById("localFileNameInput");
+  const name = inp ? inp.value.trim() : "";
+  if (!name) {
+    showModalError("Please enter a file name.");
+    return;
+  }
+  let files = JSON.parse(safeGetStorage("mk_files") || "{}");
   files[name] = getEditorCode();
-  localStorage.setItem("mk_files", JSON.stringify(files));
+  safeSetStorage("mk_files", JSON.stringify(files));
+  closeStudioModal();
   loadHistory();
   showToast("💾 File saved locally!");
 }
 
+function deleteLocalFileByName(name, event) {
+  if (event) event.stopPropagation();
+  let files = JSON.parse(safeGetStorage("mk_files") || "{}");
+  if (files[name] === undefined) return;
+  showConfirmModal("Delete Local File", `Delete '${name}' from your saved local files?`, () => {
+    delete files[name];
+    safeSetStorage("mk_files", JSON.stringify(files));
+    loadHistory();
+    showToast(`🗑️ Deleted '${name}'`);
+  }, "Delete", true);
+}
+
 function loadHistory(){
-  let files = JSON.parse(localStorage.getItem("mk_files") || "{}");
+  let files = JSON.parse(safeGetStorage("mk_files") || "{}");
   let box = document.getElementById("historyList");
   if(!box) return;
   box.innerHTML = "";
 
-  if(Object.keys(files).length === 0){
-    box.innerHTML = "<p style='color:var(--text-muted); font-size:12.5px; text-align:center; padding:15px;'>No local files saved yet.</p>";
+  const searchQ = (document.getElementById("localSearchInput")?.value || "").trim().toLowerCase();
+  const pins = getPinnedLocalFiles();
+
+  let keys = Object.keys(files).filter(name => !searchQ || name.toLowerCase().includes(searchQ));
+  keys.sort((a, b) => {
+    const ap = pins.includes(a) ? 0 : 1;
+    const bp = pins.includes(b) ? 0 : 1;
+    return ap - bp;
+  });
+
+  if(keys.length === 0){
+    box.innerHTML = `<p style='color:var(--text-muted); font-size:12.5px; text-align:center; padding:15px;'>${searchQ ? "No matching local files." : "No local files saved yet."}</p>`;
     return;
   }
 
-  for(let name in files){
+  keys.forEach((name) => {
+    const isPinned = pins.includes(name);
     let div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `📄 <b>${name}</b> <span style="color:var(--accent-cyan); font-size:11px;">Load →</span>`;
+    div.className = "card" + (isPinned ? " pinned" : "");
+    div.innerHTML = `
+      <div class="card-title-wrap">${isPinned ? "📌 " : "📄 "}<b>${escapeHtml(name)}</b></div>
+      <div style="display:flex; align-items:center; gap:4px; flex-shrink:0;">
+        <button class="mini-action-btn pin-btn ${isPinned ? 'active' : ''}" title="Pin / Unpin">📌</button>
+        <button class="mini-action-btn del-btn" title="Delete File">🗑️</button>
+      </div>
+    `;
+    div.querySelector(".pin-btn").onclick = (e) => togglePinLocalFile(name, e);
+    div.querySelector(".del-btn").onclick = (e) => deleteLocalFileByName(name, e);
     div.onclick = function(){
       setEditorCode(files[name]);
       preview();
       updateStats();
       showToast(`📂 Loaded '${name}'`);
-    }
+    };
     box.appendChild(div);
+  });
+}
+
+// ==========================================
+// DEPLOYED CODES — VERSION HISTORY (v1, v2, v3...) + REUSE + FAST-EDIT MODE
+// ==========================================
+function ensureVersionsArray(item) {
+  if (!item) return [];
+  if (Array.isArray(item.versions) && item.versions.length > 0) return item.versions;
+  if (item.code !== undefined) {
+    return [{ version: 1, savedAt: item.createdAt || "Initial", code: item.code, note: "Initial Deployment" }];
+  }
+  return [];
+}
+
+function enterFastEditMode(binId, name, versionCount) {
+  activeEditTarget = { binId, name, versionCount: versionCount || 1 };
+  const banner = document.getElementById("activeEditBanner");
+  const label = document.getElementById("activeEditLabel");
+  const mainBtn = document.getElementById("mainDeployBtn");
+  if (banner) banner.classList.add("visible");
+  if (label) label.textContent = `${name || binId} (Currently v${activeEditTarget.versionCount} → Next v${activeEditTarget.versionCount + 1})`;
+  if (mainBtn) mainBtn.textContent = "🚀 Deploy / Update";
+  loadLinkHistory();
+}
+
+function exitFastEditMode() {
+  activeEditTarget = null;
+  const banner = document.getElementById("activeEditBanner");
+  const mainBtn = document.getElementById("mainDeployBtn");
+  if (banner) banner.classList.remove("visible");
+  if (mainBtn) mainBtn.textContent = "🚀 Generate Link";
+  loadLinkHistory();
+  showToast("Exited Fast-Edit Mode.");
+}
+
+function triggerFastEditPush() {
+  if (!activeEditTarget || !activeEditTarget.binId) return;
+  updateExistingLink(activeEditTarget.binId, activeEditTarget.name || "");
+}
+
+function buildSimpleLineDiff(oldCode, newCode) {
+  const oldLines = (oldCode || "").split("\n");
+  const newLines = (newCode || "").split("\n");
+  const maxLen = Math.min(Math.max(oldLines.length, newLines.length), 120);
+  let out = [];
+  for (let i = 0; i < maxLen; i++) {
+    const a = oldLines[i];
+    const b = newLines[i];
+    if (a === b) {
+      if (a !== undefined) out.push(`<div class="diff-ctx">  ${escapeHtml(a)}</div>`);
+    } else {
+      if (a !== undefined) out.push(`<div class="diff-del">- ${escapeHtml(a)}</div>`);
+      if (b !== undefined) out.push(`<div class="diff-add">+ ${escapeHtml(b)}</div>`);
+    }
+  }
+  return out.join("") || `<div class="diff-ctx">No line differences.</div>`;
+}
+
+// TAP ANY DEPLOYED CODE -> OPEN VERSION EXPLORER & FAST-EDIT MANAGER
+function openDeployedCodeModal(origIdx) {
+  let list = JSON.parse(safeGetStorage("mk_links_history") || "[]");
+  const item = list[origIdx];
+  if (!item) return;
+
+  const versions = ensureVersionsArray(item);
+  const isPerm = item.type === "Permanent";
+  const latestV = versions[versions.length - 1];
+  const displayName = item.name || `Link #${String(item.binId || "").slice(-5)}`;
+
+  // Show newest version at top (v3, v2, v1...)
+  const reversed = versions.slice().reverse();
+  const versionsHtml = reversed.map((v) => {
+    const kb = (new Blob([v.code || ""]).size / 1024).toFixed(1);
+    return `
+      <div class="version-row">
+        <div>
+          <strong style="color:var(--accent-cyan);">Version ${v.version}</strong>
+          <span style="color:var(--text-muted); font-size:11px; margin-left:6px;">${escapeHtml(v.savedAt || "")} • ${kb} KB</span>
+          <div style="font-size:11px; color:#94a3b8; margin-top:2px;">${escapeHtml(v.note || "Deployment")}</div>
+        </div>
+        <div style="display:flex; gap:5px; flex-wrap:wrap;">
+          <button class="mini-action-btn" onclick="viewDeployedVersionCode(${origIdx}, ${v.version})">👁️ View</button>
+          <button class="mini-action-btn update-btn" onclick="reuseDeployedVersion(${origIdx}, ${v.version})">♻️ Reuse in Editor</button>
+          <button class="mini-action-btn" onclick="diffDeployedVersion(${origIdx}, ${v.version})">🔍 Diff ${isPremiumUser() ? "" : "👑"}</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  openStudioModal({
+    title: `🚀 ${displayName} (v${latestV ? latestV.version : 1})`,
+    wide: true,
+    bodyHtml: `
+      <div style="background:rgba(2,6,23,0.75); border:1px solid rgba(56,189,248,0.25); border-radius:10px; padding:12px; margin-bottom:14px;">
+        <div style="font-size:11.5px; color:var(--text-muted); margin-bottom:4px;">Live Deployed URL (${isPerm ? "Permanent" : "Temporary"}):</div>
+        <input type="text" value="${escapeHtml(item.url)}" readonly onclick="this.select()" style="margin-top:0;">
+        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:10px;">
+          ${isPerm ? `<button class="btn-green" style="padding:7px 14px;" onclick="openForFastEdit(${origIdx})">✏️ Open &amp; Fast-Edit (No Bin ID)</button>` : ""}
+          <button class="btn-cyan" style="padding:7px 12px;" onclick="copyLinkFromHistory(${origIdx})">📋 Copy URL</button>
+          <a href="${escapeHtml(item.url)}" target="_blank" style="text-decoration:none;"><button class="btn-secondary" style="padding:7px 12px;" type="button">🌐 Open Live</button></a>
+          <button class="btn-secondary" style="padding:7px 12px;" onclick="showQrModalForHistory(${origIdx})">📱 QR</button>
+        </div>
+      </div>
+
+      <div style="font-size:13px; font-weight:700; color:#e2e8f0; margin-bottom:8px;">📜 Deployment Versions (${versions.length})</div>
+      <div style="max-height:230px; overflow-y:auto;">${versionsHtml}</div>
+      <div id="deployedVersionInspector"></div>
+    `,
+    footerHtml: `<button class="btn-secondary" onclick="closeStudioModal()">Close</button>`
+  });
+}
+
+function openForFastEdit(origIdx) {
+  let list = JSON.parse(safeGetStorage("mk_links_history") || "[]");
+  const item = list[origIdx];
+  if (!item) return;
+  const versions = ensureVersionsArray(item);
+  const latestV = versions[versions.length - 1];
+  setEditorCode((latestV && latestV.code !== undefined) ? latestV.code : (item.code || ""));
+  preview();
+  updateStats();
+  closeStudioModal();
+  if (item.type === "Permanent") {
+    enterFastEditMode(item.binId, item.name || `Link #${item.binId.slice(-5)}`, versions.length);
+    showToast(`✏️ Loaded '${item.name || item.binId}' — edit & click Update Live!`);
   }
 }
 
-// SAVE & LOAD CREATED LINKS HISTORY (WITH CODE INSPECTION & RESTORE)
-function saveLinkToHistory(item) {
-  let list = JSON.parse(localStorage.getItem("mk_links_history") || "[]");
-  // Update if binId already exists, otherwise add to top
+function viewDeployedVersionCode(origIdx, versionNum) {
+  let list = JSON.parse(safeGetStorage("mk_links_history") || "[]");
+  const item = list[origIdx];
+  if (!item) return;
+  const versions = ensureVersionsArray(item);
+  const v = versions.find(x => x.version === versionNum);
+  if (!v) return;
+  const box = document.getElementById("deployedVersionInspector");
+  if (!box) return;
+  box.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+      <span style="font-size:12px; color:var(--accent-cyan); font-weight:700;">👁️ Viewing Version ${v.version} Code:</span>
+      <button class="mini-action-btn" onclick="copyTextToClipboard(window._inspectedVersionCode, '📋 Version code copied!')">📋 Copy Code</button>
+    </div>
+    <div class="version-code-viewer">${escapeHtml(v.code || "")}</div>
+  `;
+  window._inspectedVersionCode = v.code || "";
+}
+
+function reuseDeployedVersion(origIdx, versionNum) {
+  let list = JSON.parse(safeGetStorage("mk_links_history") || "[]");
+  const item = list[origIdx];
+  if (!item) return;
+  const versions = ensureVersionsArray(item);
+  const v = versions.find(x => x.version === versionNum);
+  if (!v) return;
+  setEditorCode(v.code || "");
+  preview();
+  updateStats();
+  closeStudioModal();
+  if (item.type === "Permanent") {
+    enterFastEditMode(item.binId, item.name || `Link #${item.binId.slice(-5)}`, versions.length);
+  }
+  showToast(`♻️ Loaded Version ${v.version} into editor!`);
+}
+
+function diffDeployedVersion(origIdx, versionNum) {
+  if (!isPremiumUser()) {
+    showToast("👑 Code Diff Comparison requires MK Cloud Premium!");
+    openPremiumModal("1w");
+    return;
+  }
+  let list = JSON.parse(safeGetStorage("mk_links_history") || "[]");
+  const item = list[origIdx];
+  if (!item) return;
+  const versions = ensureVersionsArray(item);
+  const v = versions.find(x => x.version === versionNum);
+  if (!v) return;
+  const box = document.getElementById("deployedVersionInspector");
+  if (!box) return;
+  box.innerHTML = `
+    <div style="margin-top:10px; font-size:11.5px; color:var(--accent-cyan); font-weight:600;">🔍 Diff: Version ${v.version} (Red) vs Current Editor (Green)</div>
+    <div class="diff-box">${buildSimpleLineDiff(v.code || "", getEditorCode())}</div>
+  `;
+}
+
+// SAVE & LOAD DEPLOYED CODES HISTORY
+function saveLinkToHistory(item, versionNote = "Deployment") {
+  let list = JSON.parse(safeGetStorage("mk_links_history") || "[]");
   const existingIdx = list.findIndex(x => x.binId === item.binId);
   if (existingIdx !== -1) {
+    const prevItem = list[existingIdx];
+    const versions = ensureVersionsArray(prevItem).slice();
+    const nextVer = (versions.length ? versions[versions.length - 1].version : 0) + 1;
+    versions.push({
+      version: nextVer,
+      savedAt: new Date().toLocaleString(),
+      code: item.code,
+      note: versionNote || `Updated to v${nextVer}`
+    });
+    item.pinned = Boolean(prevItem.pinned);
+    item.versions = versions.slice(-20); // Keep up to 20 versions per project
     list[existingIdx] = item;
   } else {
+    item.versions = [{
+      version: 1,
+      savedAt: item.createdAt || new Date().toLocaleString(),
+      code: item.code,
+      note: "Initial Deployment (v1)"
+    }];
     list.unshift(item);
   }
-  localStorage.setItem("mk_links_history", JSON.stringify(list));
+  safeSetStorage("mk_links_history", JSON.stringify(list));
+  loadLinkHistory();
+}
+
+function togglePinLinkHistory(binId, event) {
+  if (event) event.stopPropagation();
+  let list = JSON.parse(safeGetStorage("mk_links_history") || "[]");
+  const idx = list.findIndex(x => x.binId === binId);
+  if (idx === -1) return;
+  list[idx].pinned = !list[idx].pinned;
+  safeSetStorage("mk_links_history", JSON.stringify(list));
   loadLinkHistory();
 }
 
 function loadLinkHistory() {
-  let list = JSON.parse(localStorage.getItem("mk_links_history") || "[]");
+  let list = JSON.parse(safeGetStorage("mk_links_history") || "[]");
   let box = document.getElementById("linkHistoryList");
   if (!box) return;
   box.innerHTML = "";
 
-  if (list.length === 0) {
-    box.innerHTML = "<p style='color:var(--text-muted); font-size:12.5px; text-align:center; padding:15px;'>No links created yet.</p>";
+  const searchQ = (document.getElementById("linkSearchInput")?.value || "").trim().toLowerCase();
+
+  let indexed = list.map((item, origIdx) => ({ item, origIdx }));
+  if (searchQ) {
+    indexed = indexed.filter(({ item }) =>
+      (item.name || "").toLowerCase().includes(searchQ) ||
+      (item.binId || "").toLowerCase().includes(searchQ)
+    );
+  }
+  indexed.sort((a, b) => (a.item.pinned ? 0 : 1) - (b.item.pinned ? 0 : 1));
+
+  if (indexed.length === 0) {
+    box.innerHTML = `<p style='color:var(--text-muted); font-size:12.5px; text-align:center; padding:15px;'>${searchQ ? "No matching deployed codes." : "No deployed codes yet."}</p>`;
     return;
   }
 
-  list.forEach((item, index) => {
+  indexed.forEach(({ item, origIdx }) => {
+    const versions = ensureVersionsArray(item);
+    const latestV = versions.length;
+    const isPerm = item.type === "Permanent";
+    const isEditing = activeEditTarget && activeEditTarget.binId === item.binId;
+    const badgeColor = isPerm ? "#4ade80" : "#fbbf24";
+    const displayName = item.name ? item.name : `Link #${String(item.binId || "").slice(-5)}`;
+
     let div = document.createElement("div");
-    div.className = "link-history-card";
-    const badgeColor = item.type === "Permanent" ? "#4ade80" : "#fbbf24";
-    const displayName = item.name ? item.name : `Link #${item.binId.slice(-5)}`;
+    div.className = "link-history-card" + (item.pinned ? " pinned" : "") + (isEditing ? " active-editing" : "");
+    div.onclick = () => openDeployedCodeModal(origIdx);
 
     div.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <b style="color:#f8fafc; font-size:12.5px; word-break:break-all;">🔗 ${displayName}</b>
-        <span style="font-size:10px; font-weight:700; color:${badgeColor}; border:1px solid ${badgeColor}; padding:1px 6px; border-radius:4px;">${item.type === "Permanent" ? "PERM" : "TEMP"}</span>
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
+        <b style="color:#f8fafc; font-size:12.5px; word-break:break-all;">${item.pinned ? "📌 " : "🚀 "}${escapeHtml(displayName)}${item.hasPasscode ? " 🔒" : ""}</b>
+        <div style="display:flex; gap:4px; align-items:center; flex-shrink:0;">
+          <span style="font-size:10px; font-weight:700; color:#38bdf8; border:1px solid rgba(56,189,248,0.45); padding:1px 5px; border-radius:4px;">v${latestV}</span>
+          <span style="font-size:10px; font-weight:700; color:${badgeColor}; border:1px solid ${badgeColor}; padding:1px 5px; border-radius:4px;">${isPerm ? "PERM" : "TEMP"}</span>
+        </div>
       </div>
-      <div style="font-size:10.5px; color:var(--text-muted);">🕒 ${item.createdAt || "Just now"}</div>
-      <div class="link-card-actions">
-        <button class="mini-action-btn" onclick="loadCodeFromLinkHistory(${index})">💻 Load Code</button>
-        <button class="mini-action-btn" onclick="copyLinkFromHistory('${item.url}')">📋 Copy URL</button>
-        <a href="${item.url}" target="_blank" class="mini-action-btn" style="text-decoration:none; display:inline-flex; align-items:center;">🌐 Open</a>
+      <div style="font-size:10.5px; color:var(--text-muted);">🕒 ${escapeHtml(item.createdAt || "Just now")} • Tap to view all versions</div>
+      <div class="link-card-actions" onclick="event.stopPropagation()">
+        ${isPerm ? `<button class="mini-action-btn update-btn" onclick="openForFastEdit(${origIdx})">✏️ Edit</button>` : `<button class="mini-action-btn" onclick="loadCodeFromLinkHistory(${origIdx})">💻 Load</button>`}
+        <button class="mini-action-btn" onclick="openDeployedCodeModal(${origIdx})">📜 v1–v${latestV}</button>
+        <button class="mini-action-btn" onclick="copyLinkFromHistory(${origIdx})">📋 Copy</button>
+        <a href="${escapeHtml(item.url)}" target="_blank" class="mini-action-btn" style="text-decoration:none; display:inline-flex; align-items:center;">🌐 Open</a>
+        <button class="mini-action-btn pin-btn ${item.pinned ? 'active' : ''}" title="Pin / Unpin" onclick="togglePinLinkHistory('${escapeHtml(item.binId)}', event)">📌</button>
+        <button class="mini-action-btn del-btn" title="Remove from history" onclick="deleteLinkFromHistory(${origIdx})">✕</button>
       </div>
     `;
     box.appendChild(div);
@@ -1687,7 +3761,7 @@ function loadLinkHistory() {
 }
 
 function loadCodeFromLinkHistory(index) {
-  let list = JSON.parse(localStorage.getItem("mk_links_history") || "[]");
+  let list = JSON.parse(safeGetStorage("mk_links_history") || "[]");
   if (list[index] && list[index].code !== undefined) {
     setEditorCode(list[index].code);
     preview();
@@ -1696,28 +3770,169 @@ function loadCodeFromLinkHistory(index) {
   }
 }
 
-function copyLinkFromHistory(url) {
-  navigator.clipboard.writeText(url).then(() => {
-    showToast("📋 Link copied to clipboard!");
-  }).catch(() => {
-    prompt("Copy your link:", url);
-  });
-}
-
-function clearLinkHistory() {
-  if (confirm("Clear all created link history from this browser?")) {
-    localStorage.removeItem("mk_links_history");
-    loadLinkHistory();
-    showToast("🗑️ Link history cleared.");
+function copyLinkFromHistory(indexOrUrl) {
+  if (typeof indexOrUrl === "number") {
+    let list = JSON.parse(safeGetStorage("mk_links_history") || "[]");
+    if (list[indexOrUrl] && list[indexOrUrl].url) {
+      copyTextToClipboard(list[indexOrUrl].url, "📋 Link copied to clipboard!");
+    }
+  } else {
+    copyTextToClipboard(indexOrUrl, "📋 Link copied to clipboard!");
   }
 }
 
-// CLOUD PAYLOAD BUILDER (HANDLES MASSIVE MULTI-THOUSAND LINE PROJECTS + CREATOR LOCK + LINK NAME)
-async function createCloudPayload(html, expireTime, linkName = "", creatorToken = "") {
-  const compressed = LZString.compressToUTF16 ? LZString.compressToEncodedURIComponent(html) : html;
-  const ownerUid = creatorToken || getCreatorToken();
+function deleteLinkFromHistory(index) {
+  let list = JSON.parse(safeGetStorage("mk_links_history") || "[]");
+  if (!list[index]) return;
+  const label = list[index].name || list[index].binId;
+  showConfirmModal("Remove Deployed Code", `Remove '${label}' from this browser's history? (The live cloud URL itself stays active.)`, () => {
+    if (activeEditTarget && activeEditTarget.binId === list[index].binId) {
+      exitFastEditMode();
+    }
+    list.splice(index, 1);
+    safeSetStorage("mk_links_history", JSON.stringify(list));
+    loadLinkHistory();
+    showToast("🗑️ Removed from deployed codes.");
+  }, "Remove", true);
+}
 
-  // Single Bin Path (Compressed fits inside a single JSONBin)
+function clearLinkHistory() {
+  showConfirmModal("Clear All Deployed Codes", "Clear all deployed code history from this browser?", () => {
+    exitFastEditMode();
+    safeRemoveStorage("mk_links_history");
+    loadLinkHistory();
+    showToast("🗑️ Deployed codes history cleared.");
+  }, "Clear All", true);
+}
+
+// STUDIO BACKUP & CREATOR KEY PORTABILITY (JSON EXPORT / IMPORT)
+function exportStudioBackup() {
+  const backup = {
+    app: "MK HTML Cloud Studio",
+    version: 3,
+    exportedAt: new Date().toISOString(),
+    mk_creator_uid: getCreatorToken(),
+    mk_files: JSON.parse(safeGetStorage("mk_files") || "{}"),
+    mk_links_history: JSON.parse(safeGetStorage("mk_links_history") || "[]")
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `mk-cloud-studio-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToast("📦 Studio backup & creator key exported!");
+}
+
+function triggerImportBackup() {
+  const input = document.getElementById("backupFileInput");
+  if (input) {
+    input.value = "";
+    input.click();
+  }
+}
+
+function handleImportBackup(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data || (typeof data.mk_files !== "object" && !Array.isArray(data.mk_links_history) && !data.mk_creator_uid)) {
+        showToast("❌ Invalid MK Studio backup file.");
+        return;
+      }
+      if (data.mk_creator_uid && typeof data.mk_creator_uid === "string") {
+        safeSetStorage("mk_creator_uid", data.mk_creator_uid);
+      }
+      if (data.mk_files && typeof data.mk_files === "object") {
+        const currentFiles = JSON.parse(safeGetStorage("mk_files") || "{}");
+        safeSetStorage("mk_files", JSON.stringify(Object.assign({}, currentFiles, data.mk_files)));
+      }
+      if (Array.isArray(data.mk_links_history)) {
+        const currentLinks = JSON.parse(safeGetStorage("mk_links_history") || "[]");
+        const mapById = new Map();
+        currentLinks.forEach(item => { if (item && item.binId) mapById.set(item.binId, item); });
+        data.mk_links_history.forEach(item => { if (item && item.binId) mapById.set(item.binId, item); });
+        safeSetStorage("mk_links_history", JSON.stringify(Array.from(mapById.values())));
+      }
+      loadHistory();
+      loadLinkHistory();
+      showToast("✅ Backup & creator key restored!");
+    } catch (err) {
+      showToast("❌ Could not parse backup JSON.");
+    }
+  };
+  reader.readAsText(file);
+}
+
+// QR CODE & WEB SHARE HELPERS
+function renderQrInto(containerEl, url) {
+  if (!containerEl) return;
+  containerEl.innerHTML = "";
+  if (typeof QRCode !== "undefined") {
+    new QRCode(containerEl, {
+      text: url,
+      width: 168,
+      height: 168,
+      colorDark: "#020617",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  } else {
+    containerEl.innerHTML = `<span style="color:#020617; font-size:11px;">QR library unavailable offline.</span>`;
+  }
+}
+
+function showQrModalForHistory(index) {
+  let list = JSON.parse(safeGetStorage("mk_links_history") || "[]");
+  const item = list[index];
+  if (!item || !item.url) return;
+  openStudioModal({
+    title: "📱 QR Code & Share",
+    bodyHtml: `
+      <div style="text-align:center;">
+        <p style="font-size:12.5px; color:#cbd5e1; margin-bottom:12px; word-break:break-all;"><strong>${escapeHtml(item.name || item.binId)}</strong></p>
+        <div class="qr-canvas-wrap"><div id="modalQrTarget"></div></div>
+        <input type="text" value="${escapeHtml(item.url)}" readonly onclick="this.select()" style="margin-top:12px;">
+      </div>
+    `,
+    footerHtml: `
+      <button class="btn-secondary" onclick="copyLinkFromHistory(${index})">📋 Copy</button>
+      <button class="btn-cyan" onclick="shareCloudLinkByIndex(${index})">📤 Share</button>
+      <button onclick="closeStudioModal()">Done</button>
+    `
+  });
+  setTimeout(() => renderQrInto(document.getElementById("modalQrTarget"), item.url), 30);
+}
+
+function shareCloudLinkByIndex(index) {
+  let list = JSON.parse(safeGetStorage("mk_links_history") || "[]");
+  const item = list[index];
+  if (!item || !item.url) return;
+  shareCloudLink(item.url, item.name || "MK Cloud App");
+}
+
+function shareCloudLink(url, title = "MK HTML Cloud Studio App") {
+  if (navigator.share) {
+    navigator.share({ title, text: "Check out this web app built on MK HTML Cloud Studio:", url }).catch(() => {});
+  } else {
+    copyTextToClipboard(url, "📋 Link copied (Share menu not supported here)!");
+  }
+}
+
+// CLOUD PAYLOAD BUILDER (HANDLES MASSIVE MULTI-THOUSAND LINE PROJECTS + CREATOR LOCK + LINK NAME + VISITOR PASSCODE)
+async function createCloudPayload(html, expireTime, linkName = "", creatorToken = "", viewerPasscode = "") {
+  const compressed = (typeof LZString !== "undefined" && LZString.compressToEncodedURIComponent)
+    ? LZString.compressToEncodedURIComponent(html)
+    : html;
+  const ownerUid = creatorToken || getCreatorToken();
+  const tierTag = isPremiumUser() ? "premium" : "free";
+
   if (compressed.length <= CHUNK_LIMIT) {
     return {
       compressed: true,
@@ -1725,11 +3940,12 @@ async function createCloudPayload(html, expireTime, linkName = "", creatorToken 
       expire: expireTime,
       protected: expireTime === null,
       linkName: linkName || "",
-      creatorToken: ownerUid
+      creatorToken: ownerUid,
+      viewerPasscode: viewerPasscode || "",
+      tier: tierTag
     };
   }
 
-  // Multi-Bin Chunking Path for Huge Projects (Thousands & Thousands of Lines)
   const chunks = [];
   for (let i = 0; i < compressed.length; i += CHUNK_LIMIT) {
     chunks.push(compressed.slice(i, i + CHUNK_LIMIT));
@@ -1755,47 +3971,161 @@ async function createCloudPayload(html, expireTime, linkName = "", creatorToken 
     expire: expireTime,
     protected: expireTime === null,
     linkName: linkName || "",
-    creatorToken: ownerUid
+    creatorToken: ownerUid,
+    viewerPasscode: viewerPasscode || "",
+    tier: tierTag
   };
 }
 
-// GENERATE CLOUD LINK
-async function generate(){
+// GENERATE CLOUD LINK (OR FAST-UPDATE IF IN FAST-EDIT MODE!)
+let activeDeployMode = "permanent";
+
+function setDeployModalMode(mode) {
+  activeDeployMode = mode;
+  const permBtn = document.getElementById("tabPermBtn");
+  const tempBtn = document.getElementById("tabTempBtn");
+  const permFields = document.getElementById("permDeployFields");
+  const tempFields = document.getElementById("tempDeployFields");
+  if (permBtn && tempBtn) {
+    permBtn.classList.toggle("active", mode === "permanent");
+    tempBtn.classList.toggle("active", mode === "temporary");
+  }
+  if (permFields && tempFields) {
+    permFields.style.display = mode === "permanent" ? "block" : "none";
+    tempFields.style.display = mode === "temporary" ? "block" : "none";
+  }
+  const errEl = document.getElementById("studioModalError");
+  if (errEl) errEl.style.display = "none";
+}
+
+function generate(forceNew = false){
   let html = getEditorCode();
   if(!html){ showToast("⚠️ Code cannot be empty!"); return; }
 
-  let inputTime = prompt("Enter expire time in minutes, or type 'permanent':");
-  if(!inputTime) return;
+  // If user is currently in Fast-Edit Mode for a Deployed Code, let them 1-tap Update Live or Deploy New
+  if (!forceNew && activeEditTarget && activeEditTarget.binId) {
+    openStudioModal({
+      title: `🚀 Deploy '${activeEditTarget.name}'`,
+      bodyHtml: `
+        <p style="font-size:13px; color:#cbd5e1; line-height:1.55;">
+          You are editing <strong>${escapeHtml(activeEditTarget.name)}</strong> (v${activeEditTarget.versionCount}). Push your edits directly to this live URL (as v${activeEditTarget.versionCount + 1}), or deploy as a brand-new link?
+        </p>
+      `,
+      footerHtml: `
+        <button class="btn-secondary" onclick="closeStudioModal(); generate(true)">➕ Deploy as New Link</button>
+        <button class="btn-green" onclick="closeStudioModal(); triggerFastEditPush()">🚀 Update Live (v${activeEditTarget.versionCount + 1})</button>
+      `
+    });
+    return;
+  }
+
+  // Enforce Daily Deployment Limit for Free Users
+  const cfg = getCloudConfig();
+  const limit = Math.max(1, parseInt(cfg.freeDailyLimit, 10) || 2);
+  if (!isPremiumUser() && getDailyDeployCount() >= limit) {
+    openStudioModal({
+      title: "⛔ Daily Deployment Limit Reached",
+      bodyHtml: `
+        <p style="color:#fca5a5; font-size:13.5px; line-height:1.55; margin-bottom:10px;">
+          Free users can create up to <strong>${limit} deployments per day</strong>. You've used ${getDailyDeployCount()} / ${limit} today.
+        </p>
+        <p style="color:#cbd5e1; font-size:13px; line-height:1.5;">
+          Upgrade to <strong>MK Cloud Premium</strong> for unlimited daily deployments, zero ads, and boosted fast ping!
+        </p>
+      `,
+      footerHtml: `
+        <button class="btn-secondary" onclick="closeStudioModal()">Later</button>
+        <button class="btn-gold" onclick="closeStudioModal(); openPremiumModal('1m')">👑 Upgrade / Redeem Code</button>
+      `
+    });
+    return;
+  }
+
+  const prem = isPremiumUser();
+  activeDeployMode = "permanent";
+  openStudioModal({
+    title: "🚀 Deploy Cloud Link",
+    bodyHtml: `
+      <div class="modal-tabs">
+        <button id="tabPermBtn" class="modal-tab-btn active" onclick="setDeployModalMode('permanent')">♾️ Permanent</button>
+        <button id="tabTempBtn" class="modal-tab-btn" onclick="setDeployModalMode('temporary')">⏱️ Temporary</button>
+      </div>
+      <div id="permDeployFields">
+        <div class="modal-field">
+          <label for="deployPassInput">Owner Password (Permanent Link)</label>
+          <input type="password" id="deployPassInput" placeholder="Enter password">
+        </div>
+        <div class="modal-field">
+          <label for="deployNameInput">Custom Link Name (Optional)</label>
+          <input type="text" id="deployNameInput" placeholder="e.g. my-portfolio-v1">
+        </div>
+      </div>
+      <div id="tempDeployFields" style="display:none;">
+        <div class="modal-field">
+          <label for="deployMinsInput">Expire Time (in minutes)</label>
+          <input type="number" id="deployMinsInput" min="1" value="60" placeholder="e.g. 30">
+        </div>
+      </div>
+      <div class="modal-field" style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(56,189,248,0.18);">
+        <label for="deployViewerPassInput">🔒 Visitor Passcode Lock (Optional) ${prem ? "" : '<span class="pro-badge">PRO</span>'}</label>
+        <input type="text" id="deployViewerPassInput" placeholder="${prem ? 'Leave blank for public link' : 'Upgrade to Premium to lock viewer links'}" ${prem ? "" : "disabled"}>
+      </div>
+    `,
+    footerHtml: `
+      <button class="btn-secondary" onclick="closeStudioModal()">Cancel</button>
+      <button id="deploySubmitBtn" onclick="executeGenerateLink()">🚀 Deploy Now</button>
+    `
+  });
+}
+
+function executeGenerateLink() {
+  let html = getEditorCode();
+  if (!html) { showModalError("Code cannot be empty!"); return; }
 
   let expireTime;
   let customLinkName = "";
+  let viewerPasscode = "";
 
-  if(inputTime.trim().toLowerCase() === "permanent" || inputTime.trim().toLowerCase() === "p"){
-    let pass = prompt("Enter password for permanent link:");
-    if(pass !== "L"){
-      showToast("❌ Incorrect password!");
+  if (activeDeployMode === "permanent") {
+    const pass = (document.getElementById("deployPassInput").value || "").trim();
+    if (pass !== "L") {
+      showModalError("❌ Incorrect password!");
       return;
     }
     expireTime = null;
-
-    // Optional Custom Link Name for Permanent Links
-    let namePrompt = prompt("Enter an optional name for your permanent link (or leave blank to skip):");
-    if (namePrompt && namePrompt.trim()) {
-      customLinkName = namePrompt.trim();
-    }
+    customLinkName = (document.getElementById("deployNameInput").value || "").trim();
   } else {
-    let minutes = parseFloat(inputTime);
-    if(isNaN(minutes) || minutes <= 0){
-      showToast("⚠️ Enter valid minutes or 'permanent'.");
+    const minutes = parseFloat(document.getElementById("deployMinsInput").value);
+    if (isNaN(minutes) || minutes <= 0) {
+      showModalError("⚠️ Enter a valid number of minutes greater than 0.");
       return;
     }
     expireTime = Date.now() + (minutes * 60000);
   }
 
-  showToast("⏳ Compressing & generating cloud link...");
+  if (isPremiumUser()) {
+    viewerPasscode = (document.getElementById("deployViewerPassInput")?.value || "").trim();
+  }
+
+  closeStudioModal();
+
+  runPreDeployAdGate(() => {
+    performCloudDeploy(html, expireTime, customLinkName, viewerPasscode);
+  });
+}
+
+async function performCloudDeploy(html, expireTime, customLinkName, viewerPasscode) {
+  const cfg = getCloudConfig();
+  if (!isPremiumUser() && cfg.freePingDelayMs > 0) {
+    showToast("🐢 Free Standard Queue — compressing payload...");
+    await new Promise(r => setTimeout(r, cfg.freePingDelayMs));
+  } else {
+    showToast("⚡ Turbo Premium Deploy — compressing payload...");
+  }
+
   try{
     const myCreatorToken = getCreatorToken();
-    const payload = await createCloudPayload(html, expireTime, customLinkName, myCreatorToken);
+    const payload = await createCloudPayload(html, expireTime, customLinkName, myCreatorToken, viewerPasscode);
 
     let res = await fetch("https://api.jsonbin.io/v3/b", {
       method:"POST",
@@ -1806,7 +4136,10 @@ async function generate(){
     let json = await res.json();
     let binId = json.metadata.id;
 
-    // Format clean URL slug if user named their permanent link
+    if (!isPremiumUser()) {
+      incrementDailyDeployCount();
+    }
+
     let slugParam = "";
     if (customLinkName) {
       let cleanSlug = encodeURIComponent(customLinkName.replace(/\s+/g, "-"));
@@ -1815,41 +4148,124 @@ async function generate(){
 
     let link = location.origin + location.pathname + "?id=" + binId + slugParam;
 
-    // Save to Local Link History with full code & metadata
     saveLinkToHistory({
       binId: binId,
       name: customLinkName || (expireTime === null ? `Permanent-${binId.slice(-5)}` : `Temp-${binId.slice(-5)}`),
       url: link,
       code: html,
       type: expireTime === null ? "Permanent" : "Temporary",
+      hasPasscode: Boolean(viewerPasscode),
       createdAt: new Date().toLocaleString(),
       creatorToken: myCreatorToken
-    });
+    }, "Initial Deployment (v1)");
 
-    // Exit full screen editor if open so user sees their generated link immediately
     const box = document.getElementById("editorBox");
     if (box.classList.contains("fullscreen-code-mode")) {
       toggleFullscreenEditor();
     }
 
-    document.getElementById("linkBox").innerHTML = `
-      <p style="margin-top:12px; color:var(--accent-cyan); font-size:13.5px; font-weight:bold;">
-        🔗 Generated Link (${expireTime === null ? 'Permanent' : 'Temporary'}${customLinkName ? ' • ' + customLinkName : ''}):
-      </p>
-      <input type="text" value="${link}" readonly onclick="this.select()">
-    `;
-    showToast("✅ Cloud link generated & saved to history!");
+    renderGeneratedLinkBox(link, expireTime === null ? "Permanent" : "Temporary", customLinkName);
+    showToast("✅ Deployed & saved as v1 in Deployed Codes!");
   }catch(e){
     showToast("❌ Error generating link. Check network or API key.");
   }
 }
 
-// EDIT EXISTING LINK (ONLY THE ORIGINAL CREATOR OF THAT LINK CAN EDIT IT)
-async function updateExistingLink(){
-  let linkInput = prompt("Enter your full link or Bin ID to edit:");
-  if(!linkInput) return;
-  let binId = linkInput.trim();
-  if(linkInput.includes("?id=")) { binId = linkInput.split("?id=")[1].split("&")[0]; }
+function renderGeneratedLinkBox(link, typeLabel, customName) {
+  window._lastGeneratedLink = link;
+  window._lastGeneratedName = customName || "MK Cloud App";
+  const labelSuffix = customName ? " • " + escapeHtml(customName) : "";
+  document.getElementById("linkBox").innerHTML = `
+    <div class="generated-link-card">
+      <p style="color:var(--accent-cyan); font-size:13.5px; font-weight:bold;">
+        🔗 Generated Link (${escapeHtml(typeLabel)}${labelSuffix}):
+      </p>
+      <input type="text" id="generatedLinkInput" value="${escapeHtml(link)}" readonly onclick="this.select()">
+      <div class="generated-link-actions">
+        <button class="btn-cyan" style="padding:7px 12px;" onclick="copyTextToClipboard(window._lastGeneratedLink, '📋 Link copied to clipboard!')">📋 Copy Link</button>
+        <a href="${escapeHtml(link)}" target="_blank" style="text-decoration:none;"><button class="btn-green" style="padding:7px 12px;" type="button">🌐 Open Live</button></a>
+        <button class="btn-purple" style="padding:7px 12px;" onclick="shareCloudLink(window._lastGeneratedLink, window._lastGeneratedName)">📤 Share</button>
+        <button class="btn-secondary" style="padding:7px 12px;" onclick="toggleInlineQr()">📱 QR Code</button>
+      </div>
+      <div id="inlineQrBox" class="qr-preview-box">
+        <div class="qr-canvas-wrap"><div id="inlineQrTarget"></div></div>
+        <span style="font-size:11.5px; color:var(--text-muted);">Scan to open on any mobile device</span>
+      </div>
+    </div>
+  `;
+}
+
+function toggleInlineQr() {
+  const box = document.getElementById("inlineQrBox");
+  if (!box) return;
+  const opening = !box.classList.contains("open");
+  box.classList.toggle("open", opening);
+  if (opening && window._lastGeneratedLink) {
+    renderQrInto(document.getElementById("inlineQrTarget"), window._lastGeneratedLink);
+  }
+}
+
+// EDIT EXISTING LINK (SUPPORTS BOTH ZERO-BIN-ID FAST-EDIT & MANUAL BIN ID)
+function updateExistingLink(prefillBinId = "", prefillName = ""){
+  let html = getEditorCode();
+  if(!html){ showToast("⚠️ Code is empty!"); return; }
+
+  const isQuick = Boolean(prefillBinId);
+  const prem = isPremiumUser();
+  openStudioModal({
+    title: isQuick ? "🚀 Fast Update Live Deployment" : "✏️ Edit Existing Cloud Link",
+    bodyHtml: `
+      ${isQuick ? `<p style="font-size:12.5px; color:#86efac; margin-bottom:12px;">Updating <strong>${escapeHtml(prefillName || prefillBinId)}</strong> directly — old version will be saved automatically in your version history.</p>` : ""}
+      <div class="modal-field" style="${isQuick ? 'display:none;' : ''}">
+        <label for="editBinInput">Full Cloud Link or Bin ID</label>
+        <input type="text" id="editBinInput" value="${escapeHtml(prefillBinId)}" placeholder="Paste full URL or Bin ID">
+      </div>
+      <div class="modal-field">
+        <label for="editPassInput">Owner Password</label>
+        <input type="password" id="editPassInput" placeholder="Enter owner password">
+      </div>
+      <div class="modal-field">
+        <label for="editVersionNoteInput">Version Note (Optional)</label>
+        <input type="text" id="editVersionNoteInput" placeholder="e.g. Fixed navbar & added dark mode">
+      </div>
+      <div class="modal-field">
+        <label for="editNameInput">Link Name (Optional)</label>
+        <input type="text" id="editNameInput" value="${escapeHtml(prefillName)}" placeholder="Keep or update custom name">
+      </div>
+      <div class="modal-field">
+        <label for="editViewerPassInput">🔒 Visitor Passcode Lock (Optional) ${prem ? "" : '<span class="pro-badge">PRO</span>'}</label>
+        <input type="text" id="editViewerPassInput" placeholder="${prem ? 'Leave blank for public link' : 'Premium required'}" ${prem ? "" : "disabled"}>
+      </div>
+    `,
+    footerHtml: `
+      <button class="btn-secondary" onclick="closeStudioModal()">Cancel</button>
+      <button class="btn-green" onclick="executeUpdateExistingLink()">🚀 Push Update</button>
+    `
+  });
+  setTimeout(() => {
+    const focusEl = isQuick ? document.getElementById("editPassInput") : document.getElementById("editBinInput");
+    if (focusEl) focusEl.focus();
+  }, 50);
+}
+
+async function executeUpdateExistingLink() {
+  let linkInput = (document.getElementById("editBinInput").value || "").trim();
+  let pass = (document.getElementById("editPassInput").value || "").trim();
+  let versionNote = (document.getElementById("editVersionNoteInput")?.value || "").trim();
+  let updatedNameInput = (document.getElementById("editNameInput").value || "").trim();
+  let viewerPasscode = isPremiumUser() ? (document.getElementById("editViewerPassInput")?.value || "").trim() : "";
+
+  if (!linkInput) { showModalError("⚠️ Enter a link or Bin ID."); return; }
+  if (pass !== "L") { showModalError("❌ Incorrect password!"); return; }
+
+  let html = getEditorCode();
+  if (!html) { showModalError("⚠️ Code is empty!"); return; }
+
+  let binId = linkInput;
+  if (linkInput.includes("?id=")) { binId = linkInput.split("?id=")[1].split("&")[0]; }
+
+  closeStudioModal();
+  showToast("⏳ Verifying creator ownership...");
 
   let existingRecord = null;
   try {
@@ -1863,44 +4279,43 @@ async function updateExistingLink(){
       return;
     }
 
-    // STRICT CREATOR LOCK: Check if current user is the original creator of this link
     const myCreatorToken = getCreatorToken();
-    const localOwnedLinks = JSON.parse(localStorage.getItem("mk_links_history") || "[]");
-    const ownedInHistory = localOwnedLinks.some(item => item.binId === binId);
+    const localOwnedLinks = JSON.parse(safeGetStorage("mk_links_history") || "[]");
+    const ownedItem = localOwnedLinks.find(item => item.binId === binId);
 
     if (existingRecord.creatorToken) {
       if (existingRecord.creatorToken !== myCreatorToken) {
-        showToast("⛔ Access Denied: Only the original creator of this link can edit it!");
-        alert("⛔ Permission Denied!\n\nYou cannot edit this link because it was created by another user. Only the original creator can update this link.");
+        showToast("⛔ Access Denied: Only the original creator can edit this link!");
+        openStudioModal({
+          title: "⛔ Permission Denied",
+          bodyHtml: `<p style="color:#fca5a5; font-size:13.5px; line-height:1.55;">You cannot edit this link because it was created by another device/user. Only the original creator (or a device with the exported Creator Key backup) can update this link.</p>`,
+          footerHtml: `<button onclick="closeStudioModal()">OK</button>`
+        });
         return;
       }
-    } else if (!ownedInHistory) {
-      // Fallback protection for links without token: must exist in creator's local history
-      showToast("⛔ Access Denied: Only the original creator of this link can edit it!");
-      alert("⛔ Permission Denied!\n\nOnly the original creator of this link can edit it.");
+    } else if (!ownedItem) {
+      showToast("⛔ Access Denied: Only the original creator can edit this link!");
+      openStudioModal({
+        title: "⛔ Permission Denied",
+        bodyHtml: `<p style="color:#fca5a5; font-size:13.5px; line-height:1.55;">Only the original creator of this link can edit it.</p>`,
+        footerHtml: `<button onclick="closeStudioModal()">OK</button>`
+      });
       return;
     }
   } catch(err) {
-    showToast("❌ Invalid Bin ID.");
+    showToast("❌ Invalid Bin ID or network error.");
     return;
   }
 
-  let pass = prompt("Enter owner password (L) to update link:");
-  if(pass !== "L"){ showToast("❌ Incorrect password!"); return; }
+  let updatedName = updatedNameInput || existingRecord.linkName || "";
+  if (!isPremiumUser() && existingRecord.viewerPasscode) {
+    viewerPasscode = existingRecord.viewerPasscode;
+  }
 
-  let html = getEditorCode();
-  if(!html){ showToast("⚠️ Code is empty!"); return; }
-
-  // Allow creator to keep or update the optional link name
-  let currentName = existingRecord.linkName || "";
-  let updatedName = prompt("Link name (optional - press OK to keep current name):", currentName);
-  if (updatedName === null) updatedName = currentName;
-  updatedName = updatedName.trim();
-
-  showToast("⏳ Compressing & updating cloud link...");
+  showToast("⏳ Compressing & updating live deployment...");
   try{
     const myCreatorToken = getCreatorToken();
-    const payload = await createCloudPayload(html, null, updatedName, myCreatorToken);
+    const payload = await createCloudPayload(html, null, updatedName, myCreatorToken, viewerPasscode);
     let res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
       method:"PUT",
       headers:{ "Content-Type":"application/json", "X-Master-Key":API_KEY },
@@ -1916,18 +4331,39 @@ async function updateExistingLink(){
         url: fullUrl,
         code: html,
         type: "Permanent",
-        createdAt: new Date().toLocaleString() + " (Edited)",
+        hasPasscode: Boolean(viewerPasscode),
+        createdAt: new Date().toLocaleString() + " (Updated)",
         creatorToken: myCreatorToken
-      });
+      }, versionNote || "Live Cloud Update");
 
-      showToast("✅ Link successfully updated!");
+      if (activeEditTarget && activeEditTarget.binId === binId) {
+        const listNow = JSON.parse(safeGetStorage("mk_links_history") || "[]");
+        const updatedItem = listNow.find(x => x.binId === binId);
+        const vCount = updatedItem ? ensureVersionsArray(updatedItem).length : (activeEditTarget.versionCount + 1);
+        enterFastEditMode(binId, updatedName || activeEditTarget.name, vCount);
+      }
+
+      renderGeneratedLinkBox(fullUrl, "Permanent • Updated", updatedName);
+      showToast("✅ Live deployment updated & saved to version history!");
     } else {
       showToast("❌ Failed to update link.");
     }
   }catch(e){ showToast("❌ Error updating link."); }
 }
 
-// VIEWER MODE WITH WATERMARK FOOTER (SUPPORTS LEGACY, COMPRESSED & MULTI-CHUNK PROJECTS)
+// VIEWER MODE WITH LOADER, PASSCODE LOCK & WATERMARK FOOTER
+function renderViewerIframe(finalHtml) {
+  document.body.innerHTML = `
+    <div class="viewer-container">
+      <div class="iframe-wrap"><iframe id="cloudFrame"></iframe></div>
+      <div class="cloud-footer">
+        <a href="https://t.me/mk_bots0" target="_blank">ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍᴋ_ʙᴏᴛs™ | ᴀʟʟ ʀɪɢʜᴛs ʀᴇsᴇʀᴠᴇᴅ ♡</a>
+      </div>
+    </div>
+  `;
+  document.getElementById("cloudFrame").srcdoc = injectViewport(finalHtml, false);
+}
+
 async function loadViewer(){
   let params = new URLSearchParams(location.search);
   let id = params.get("id");
@@ -1935,6 +4371,14 @@ async function loadViewer(){
 
   document.getElementById("landingView").style.display = "none";
   document.getElementById("appView").style.display = "none";
+
+  document.body.innerHTML = `
+    <div class="viewer-loader">
+      <div class="viewer-spinner"></div>
+      <div style="font-size:15px; font-weight:600; color:#38bdf8;">Loading MK Cloud App...</div>
+      <div style="font-size:12px; color:#94a3b8;">Fetching and decompressing live workspace</div>
+    </div>
+  `;
 
   try{
     let res = await fetch(`https://api.jsonbin.io/v3/b/${id}/latest`, { headers:{ "X-Master-Key":API_KEY } });
@@ -1949,7 +4393,12 @@ async function loadViewer(){
       return;
     }
 
-    // Set page title if the permanent link was given a custom name
+    if (data.tier === "free") {
+      const cfg = getCloudConfig();
+      const dMs = Math.min(1200, Math.max(0, parseInt(cfg.freePingDelayMs, 10) || 600));
+      if (dMs > 0) await new Promise(r => setTimeout(r, dMs));
+    }
+
     let urlName = params.get("name");
     if (data.linkName || urlName) {
       document.title = (data.linkName || decodeURIComponent(urlName)) + " | MK HTML Cloud Studio";
@@ -1957,7 +4406,6 @@ async function loadViewer(){
 
     let finalHtml = "";
 
-    // Reassemble if Multi-Bin Chunked Project
     if (data.chunked && Array.isArray(data.chunks)) {
       const chunkResults = await Promise.all(
         data.chunks.map(chunkId =>
@@ -1968,28 +4416,57 @@ async function loadViewer(){
       const combinedCompressed = chunkResults.map(c => c.record.data).join("");
       finalHtml = LZString.decompressFromEncodedURIComponent(combinedCompressed);
     } else if (data.compressed && data.data) {
-      // Single Compressed Bin
       finalHtml = LZString.decompressFromEncodedURIComponent(data.data);
     } else {
-      // Backward compatible with all previously generated links
       finalHtml = data.html || "";
     }
 
-    document.body.innerHTML = `
-      <div class="viewer-container">
-        <div class="iframe-wrap"><iframe id="cloudFrame"></iframe></div>
-        <div class="cloud-footer">
-          <a href="https://t.me/mk_bots0" target="_blank">ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍᴋ_ʙᴏᴛs™ | ᴀʟʟ ʀɪɢʜᴛs ʀᴇsᴇʀᴠᴇᴅ ♡</a>
+    if (data.viewerPasscode) {
+      window._lockedViewerHtml = finalHtml;
+      window._expectedViewerPass = data.viewerPasscode;
+      document.body.innerHTML = `
+        <div class="viewer-loader">
+          <div class="viewer-lock-card">
+            <div style="font-size:34px; margin-bottom:8px;">🔒</div>
+            <h2 style="color:#38bdf8; font-size:20px; margin-bottom:6px;">Protected Cloud App</h2>
+            <p style="font-size:12.5px; color:#94a3b8; margin-bottom:14px;">Enter the visitor passcode to unlock this page.</p>
+            <div id="viewerLockErr" style="display:none; color:#fca5a5; font-size:12px; margin-bottom:10px;">❌ Incorrect passcode. Try again.</div>
+            <input type="password" id="viewerUnlockInput" placeholder="Enter passcode">
+            <button style="width:100%; justify-content:center; margin-top:12px;" onclick="unlockProtectedViewer()">🔓 Unlock Page</button>
+          </div>
         </div>
-      </div>
-    `;
-    document.getElementById("cloudFrame").srcdoc = injectViewport(finalHtml);
+      `;
+      return;
+    }
+
+    renderViewerIframe(finalHtml);
   }catch(e){
     document.body.innerHTML="<h2 style='text-align:center;margin-top:25vh; color:#ef4444;'>⚠️ Error Loading Page</h2>";
   }
 }
 
-loadViewer();
+function unlockProtectedViewer() {
+  const inp = document.getElementById("viewerUnlockInput");
+  const entered = (inp ? inp.value : "").trim();
+  if (entered === window._expectedViewerPass) {
+    renderViewerIframe(window._lockedViewerHtml || "");
+  } else {
+    const err = document.getElementById("viewerLockErr");
+    if (err) err.style.display = "block";
+  }
+}
+
+// BOOTSTRAP STUDIO
+(async function initApp() {
+  const params = new URLSearchParams(location.search);
+  if (params.get("id")) {
+    loadViewer();
+    return;
+  }
+  refreshTierAndAdsUI();
+  restartPopupAdTimer();
+  await pullDirectCloudConfig();
+})();
 </script>
 
 </body>
